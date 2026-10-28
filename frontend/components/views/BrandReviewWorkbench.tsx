@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Brand, Review, Finding, DemoFixture } from '@/lib/types';
 import { api } from '@/lib/api';
+import { EvaluationInProgressModal } from '@/components/views/EvaluationInProgressModal';
 
 interface BrandReviewWorkbenchProps {
   brand: Brand | null;
@@ -67,13 +68,16 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
       setErrorBanner(null);
       setDecisionSuccess(null);
 
-      const review = await api.createReview({
-        brand_id: brand.id,
-        review_group_id: currentReview?.review_group_id || null,
-        title: title.trim() || 'Untitled Draft',
-        content: content,
-        run_ai: true,
-      });
+      const [review] = await Promise.all([
+        api.createReview({
+          brand_id: brand.id,
+          review_group_id: currentReview?.review_group_id || null,
+          title: title.trim() || 'Untitled Draft',
+          content: content,
+          run_ai: true,
+        }),
+        new Promise((resolve) => setTimeout(resolve, 1800)),
+      ]);
 
       setCurrentReview(review);
       if (review.latest_decision) {
@@ -339,7 +343,7 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
                 type="button"
                 disabled={isSubmitting}
                 onClick={handleCheckContent}
-                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg bg-electric-lime hover:bg-white text-surface-obsidian font-display text-[13px] font-semibold transition-all shadow-md active:scale-95 disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg bg-crimson hover:bg-crimson-deep text-white font-sans text-xs font-bold uppercase tracking-wider transition-all duration-200 shadow-[0_4px_14px_rgba(220,38,38,0.35)] active:scale-95 hover:shadow-[0_6px_20px_rgba(220,38,38,0.45)] disabled:opacity-50 cursor-pointer"
               >
                 {isSubmitting ? (
                   <>
@@ -846,6 +850,16 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
           </div>
         </div>
       )}
+
+      {/* Evaluation In Progress Modal (Stitch Design) */}
+      <EvaluationInProgressModal
+        isOpen={isSubmitting}
+        brand={brand}
+        draftTitle={title}
+        draftContent={content}
+        onCancel={() => setIsSubmitting(false)}
+        onComplete={() => setIsSubmitting(false)}
+      />
     </div>
   );
 };

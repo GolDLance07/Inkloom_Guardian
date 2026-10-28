@@ -44,18 +44,23 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           </span>
           <span>
             {isAiActive
-              ? 'AI enabled / Rules engine active'
+              ? 'AI enabled • Rules engine active'
               : 'Deterministic Rules-only mode active'}
           </span>
         </div>
+
+        {/* Minimal subtle audit indicator */}
+        <span className="hidden sm:inline-flex items-center gap-1.5 text-xs text-text-muted font-mono bg-surface-obsidian px-2.5 py-1 rounded-md border border-border-subtle">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" /> #TR-94281-EXP
+        </span>
       </div>
 
       {/* Right Controls */}
       <div className="flex items-center gap-4">
         {selectedBrand ? (
           <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-surface-graphite border border-border-subtle text-[12px] font-display text-text-mist">
-            <span className="text-text-muted">Scope:</span>
-            <span className="font-semibold text-electric-lime truncate max-w-[180px]">
+            <span className="text-text-muted">Target:</span>
+            <span className="font-semibold text-white truncate max-w-[180px]">
               {selectedBrand.name}
             </span>
           </div>
@@ -63,9 +68,9 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
           <button
             type="button"
             onClick={onOpenCreateBrand}
-            className="px-3 py-1 rounded-lg bg-electric-lime text-surface-obsidian font-display text-[12px] font-semibold hover:bg-white transition-colors cursor-pointer"
+            className="px-3 py-1 rounded-lg bg-crimson text-white font-display text-[12px] font-semibold hover:bg-crimson-deep transition-colors cursor-pointer shadow-xs"
           >
-            + Create Workspace
+            + Create Brand
           </button>
         )}
 
@@ -73,15 +78,15 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
 
         {/* Reviewer Profile Avatar */}
         <div className="flex items-center gap-2" title="Credentialed Reviewer">
-          <div className="w-8 h-8 rounded-full bg-surface-graphite-elevated border border-border-subtle flex items-center justify-center text-electric-lime">
-            <span className="material-symbols-outlined text-[18px]">person</span>
+          <div className="w-8 h-8 rounded-full bg-crimson/20 border border-crimson/40 text-red-300 font-mono text-[12px] font-bold flex items-center justify-center">
+            AG
           </div>
           <div className="hidden md:flex flex-col text-left">
-            <span className="text-[12px] font-medium text-text-mist leading-none">
-              Demo Reviewer
+            <span className="text-[12px] font-semibold text-text-mist leading-none">
+              Admin Guardian
             </span>
-            <span className="text-[10px] text-text-muted font-display uppercase tracking-wider">
-              Governance Lead
+            <span className="text-[10px] text-text-muted font-mono uppercase tracking-wider mt-0.5">
+              SecOps Level 3
             </span>
           </div>
         </div>

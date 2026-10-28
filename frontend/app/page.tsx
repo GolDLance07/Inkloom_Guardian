@@ -10,6 +10,7 @@ import { BrandReviewWorkbench } from '@/components/views/BrandReviewWorkbench';
 import { BrandKnowledgeRepository } from '@/components/views/BrandKnowledgeRepository';
 import { ReviewHistoryView } from '@/components/views/ReviewHistoryView';
 import { BrandSettingsView } from '@/components/views/BrandSettingsView';
+import { InitialLoadingScreen } from '@/components/InitialLoadingScreen';
 
 export default function Home() {
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -19,6 +20,7 @@ export default function Home() {
   const [demoFixture, setDemoFixture] = useState<DemoFixture | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
+  const [showBootScreen, setShowBootScreen] = useState(true);
 
   // Poll health & fetch initial brands
   const refreshSystemData = async () => {
@@ -77,37 +79,46 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-surface-obsidian text-text-mist flex">
-      {/* Sidebar matching Stitch */}
-      <AppSidebar
-        brands={brands}
-        selectedBrand={selectedBrand}
-        onSelectBrand={(b) => setSelectedBrand(b)}
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onOpenCreateBrand={() => setIsCreateModalOpen(true)}
-        engineActive={health?.status === 'healthy'}
-      />
+    <>
+      {showBootScreen && (
+        <InitialLoadingScreen
+          brandName={selectedBrand?.name || 'Sovereign Core'}
+          isDataReady={!initialLoading}
+          onComplete={() => setShowBootScreen(false)}
+        />
+      )}
 
-      {/* Main Body Canvas */}
-      <div className="pl-64 flex flex-col flex-1 min-h-screen">
-        {/* Top Header */}
-        <AppHeader
-          health={health}
+      <div className="min-h-screen bg-surface-obsidian text-text-mist flex">
+        {/* Sidebar matching Stitch */}
+        <AppSidebar
+          brands={brands}
           selectedBrand={selectedBrand}
+          onSelectBrand={(b) => setSelectedBrand(b)}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
           onOpenCreateBrand={() => setIsCreateModalOpen(true)}
+          engineActive={health?.status === 'healthy'}
         />
 
-        {/* Dynamic Views */}
-        <main className="w-full pt-16 flex-1 flex flex-col">
-          {initialLoading ? (
-            <div className="flex flex-col items-center justify-center min-h-[70vh] gap-3 text-text-muted">
-              <span className="material-symbols-outlined text-[32px] text-electric-lime animate-spin">
-                progress_activity
-              </span>
-              <span className="font-display text-[14px]">Connecting to Inkloom Governance Engine...</span>
-            </div>
-          ) : (
+        {/* Main Body Canvas */}
+        <div className="pl-64 flex flex-col flex-1 min-h-screen">
+          {/* Top Header */}
+          <AppHeader
+            health={health}
+            selectedBrand={selectedBrand}
+            onOpenCreateBrand={() => setIsCreateModalOpen(true)}
+          />
+
+          {/* Dynamic Views */}
+          <main className="w-full pt-16 flex-1 flex flex-col">
+            {initialLoading ? (
+              <div className="flex flex-col items-center justify-center min-h-[70vh] gap-3 text-text-muted">
+                <span className="material-symbols-outlined text-[32px] text-electric-lime animate-spin">
+                  progress_activity
+                </span>
+                <span className="font-display text-[14px]">Connecting to Inkloom Governance Engine...</span>
+              </div>
+            ) : (
             <>
               {activeTab === 'review' && (
                 <BrandReviewWorkbench
@@ -145,6 +156,7 @@ export default function Home() {
         onClose={() => setIsCreateModalOpen(false)}
         onBrandCreated={handleBrandCreated}
       />
-    </div>
+      </div>
+    </>
   );
 }

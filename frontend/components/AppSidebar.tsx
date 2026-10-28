@@ -28,23 +28,23 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
         {/* Brand Wordmark & Engine Pulse */}
         <div className="h-16 px-4 flex items-center justify-between bg-surface-obsidian border-b border-border-subtle">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-electric-lime-muted flex items-center justify-center border border-electric-lime/30">
-              <span className="material-symbols-outlined text-electric-lime text-[20px]">
-                verified_user
+            <div className="w-8 h-8 rounded-lg bg-crimson flex items-center justify-center text-white shadow-md shadow-crimson/30">
+              <span className="material-symbols-outlined text-[20px]">
+                shield_lock
               </span>
             </div>
             <div className="flex flex-col">
-              <span className="font-display text-[16px] font-semibold tracking-tight text-text-mist leading-tight">
+              <span className="font-display text-[16px] font-bold tracking-tight text-white leading-tight">
                 Inkloom
               </span>
-              <span className="font-display text-[11px] uppercase tracking-wider text-text-muted leading-none">
-                Guardian
+              <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-red-400 font-bold leading-none mt-0.5">
+                GUARDIAN
               </span>
             </div>
           </div>
           <div
             className={`w-2.5 h-2.5 rounded-full ${
-              engineActive ? 'bg-electric-lime shadow-[0_0_8px_#C6FF4D]' : 'bg-critical-red'
+              engineActive ? 'bg-[#10B981] shadow-[0_0_8px_#10B981]' : 'bg-crimson'
             }`}
             title={engineActive ? 'Governance Engine Online' : 'Engine Offline'}
           />
@@ -149,17 +149,22 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
       </div>
 
       {/* Footer System Tier */}
-      <div className="p-4 border-t border-border-subtle">
+      <div className="p-4 border-t border-border-subtle bg-surface-obsidian/50">
         <div className="p-3 rounded-lg bg-surface-obsidian flex flex-col gap-2 border border-border-subtle">
           <div className="flex items-center justify-between">
-            <span className="font-display text-[11px] text-text-muted">Governance Tier</span>
-            <span className="font-display text-[11px] text-electric-lime uppercase font-semibold">
-              V4.2 Enterprise
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
+              <span className="font-mono text-[10px] text-emerald-400 font-bold tracking-wider">
+                IMMUTABLE AUDIT
+              </span>
+            </div>
+            <span className="font-mono text-[10px] text-gray-400 bg-white/5 px-1.5 py-0.5 rounded">
+              v4.2 Ent
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-info-cyan text-[16px]">lock</span>
-            <span className="text-[12px] text-text-mist truncate">Immutable Audit Mode</span>
+          <div className="flex items-center gap-1.5 text-gray-400 text-[11px] font-mono">
+            <span className="material-symbols-outlined text-gray-500 text-[14px]">lock</span>
+            <span className="truncate">Sovereign Proof Engine</span>
           </div>
         </div>
       </div>

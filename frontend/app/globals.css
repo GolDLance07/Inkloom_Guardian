@@ -61,8 +61,89 @@
   --color-border-subtle: #363E38;
   --color-border-strong: #4A544D;
 
+  --color-midnight: #0B132B;
+  --color-midnight-dark: #070C1E;
+  --color-crimson: #DC2626;
+  --color-crimson-deep: #B91C1C;
+  --color-crimson-light: #FEE2E2;
+  --color-neon-green: #10B981;
+  --color-neon-green-light: #ECFDF5;
+  --color-parchment: #FAF7F0;
+  --color-parchment-warm: #F4EFE6;
+
   --font-display: 'Space Grotesk', sans-serif;
   --font-body: 'Inter', sans-serif;
+  --font-editorial: 'Newsreader', 'Playfair Display', serif;
+  --font-sans: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Space Grotesk', monospace;
+}
+
+.font-editorial,
+.font-serif-title {
+  font-family: 'Newsreader', 'Playfair Display', Georgia, serif;
+}
+
+.font-sans-ui {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+}
+
+.font-mono-code {
+  font-family: 'JetBrains Mono', 'Space Grotesk', monospace;
+}
+
+/* Sumi-e diffuse wash & card styling */
+.bg-ink-wash {
+  background-color: #FAF7F0;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(220, 38, 38, 0.03) 0px, transparent 50%),
+    radial-gradient(at 90% 10%, rgba(11, 19, 43, 0.05) 0px, transparent 60%),
+    radial-gradient(at 50% 50%, rgba(244, 239, 230, 0.7) 0px, transparent 100%),
+    radial-gradient(at 100% 100%, rgba(11, 19, 43, 0.05) 0px, transparent 60%),
+    radial-gradient(at 10% 90%, rgba(220, 38, 38, 0.025) 0px, transparent 50%);
+}
+
+.sumi-card-shadow {
+  box-shadow: 0 4px 20px -2px rgba(11, 19, 43, 0.06), 0 1px 3px 0 rgba(11, 19, 43, 0.04);
+}
+
+@keyframes scanline {
+  0% {
+    top: 0%;
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    top: 95%;
+    opacity: 0.2;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 14px rgba(220, 38, 38, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 26px rgba(220, 38, 38, 0.75);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-scanline {
+  animation: scanline 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2.5s infinite;
 }
 
 .font-display {
