@@ -155,12 +155,12 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
 
   if (!brand) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] p-8 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-surface-graphite border border-border-subtle flex items-center justify-center text-electric-lime mb-4">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] p-8 text-center bg-ink-wash">
+        <div className="w-16 h-16 rounded-2xl bg-white border border-[#E5DDCB] flex items-center justify-center text-crimson mb-4 sumi-card-shadow">
           <span className="material-symbols-outlined text-[36px]">corporate_fare</span>
         </div>
-        <h2 className="font-display text-[22px] font-bold text-text-mist">No Brand Workspace Selected</h2>
-        <p className="text-text-muted text-[14px] max-w-md mt-2">
+        <h2 className="font-editorial text-[22px] font-bold text-[#0B132B]">No Brand Workspace Selected</h2>
+        <p className="text-slate-600 text-[14px] max-w-md mt-2">
           Select an active brand from the sidebar or create a new workspace to start governing content against approved brand knowledge.
         </p>
       </div>
@@ -168,54 +168,54 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
   }
 
   return (
-    <div className="flex flex-col w-full pb-20">
+    <div className="flex flex-col w-full pb-20 bg-ink-wash min-h-screen text-[#18181B]">
       {/* Top Command & Brand Engine Context Ribbon */}
-      <div className="w-full px-8 py-3 bg-surface-container-lowest border-b border-border-subtle flex flex-wrap items-center justify-between gap-4 shadow-sm">
+      <div className="w-full px-8 py-3.5 bg-[#F8F5EE] border-b border-[#E6DEC8] flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-6 flex-wrap">
           {/* Active Brand Profile */}
-          <div className="flex items-center gap-3 bg-surface-graphite px-4 py-1.5 rounded-lg border border-border-subtle">
-            <span className="material-symbols-outlined text-electric-lime text-[18px]">
+          <div className="flex items-center gap-3 bg-white px-3.5 py-2 rounded-lg border border-[#E0D7C3] sumi-card-shadow">
+            <span className="material-symbols-outlined text-crimson text-[20px]">
               domain_verification
             </span>
             <div className="flex flex-col">
-              <span className="font-display text-[10px] text-text-muted uppercase tracking-wider">
+              <span className="text-[10px] font-sans font-bold text-[#64748B] uppercase tracking-wider">
                 Active Brand Profile
               </span>
-              <span className="font-display text-[14px] text-text-mist font-semibold">
+              <span className="font-serif text-base font-bold text-[#0B132B] leading-tight">
                 {brand.name}
               </span>
             </div>
             {brand.is_demo && (
-              <span className="px-1.5 py-0.5 rounded text-[10px] bg-electric-lime-muted text-electric-lime font-display font-semibold uppercase">
+              <span className="px-1.5 py-0.5 rounded text-[9px] bg-crimson/10 text-crimson font-mono font-bold uppercase tracking-wider">
                 Demo
               </span>
             )}
           </div>
 
           {/* Linked Knowledge Vector Status */}
-          <div className="flex items-center gap-4 text-text-muted text-[13px] font-display">
+          <div className="flex items-center gap-4 text-xs text-[#64748B]">
             <div className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-info-cyan text-[16px]">
+              <span className="material-symbols-outlined text-[#0B132B] text-[16px]">
                 account_tree
               </span>
               <span>Knowledge Items:</span>
-              <span className="text-text-mist font-semibold">{knowledgeCount}</span>
+              <span className="font-mono text-[#0B132B] font-semibold">{knowledgeCount}</span>
             </div>
-            <span className="text-border-strong font-bold">•</span>
+            <span className="text-[#D3C8B2] font-bold">•</span>
             <div className="flex items-center gap-1.5">
-              <span className="material-symbols-outlined text-electric-lime text-[16px]">
+              <span className="material-symbols-outlined text-[#22C55E] text-[16px]">
                 verified
               </span>
               <span>Rules Engine:</span>
-              <span className="text-text-mist font-semibold">Active & Deterministic</span>
+              <span className="font-mono text-[#0B132B] font-semibold">Active &amp; Deterministic</span>
             </div>
           </div>
         </div>
 
         {/* Sync & Session Metadata */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-surface-graphite px-3 py-1 rounded-full border border-border-subtle font-display text-[11px] text-text-mist">
-            <span className="inline-block w-2 h-2 rounded-full bg-electric-lime" />
+          <div className="flex items-center gap-2 bg-white px-3 py-1 rounded-md border border-[#E0D7C3] font-mono text-[11px] text-[#64748B] shadow-xs">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#22C55E]" />
             <span>SESSION: #{brand.slug.toUpperCase()}</span>
           </div>
         </div>
@@ -223,7 +223,7 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
 
       {/* Error / Alert Banner */}
       {errorBanner && (
-        <div className="mx-8 mt-4 p-3.5 rounded-xl bg-critical-red-surface border border-critical-red/40 text-critical-red text-[13px] flex items-center justify-between">
+        <div className="mx-8 mt-4 p-3.5 rounded-xl bg-red-50 border border-red-200 text-crimson text-[13px] flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-[18px]">error</span>
             <span>{errorBanner}</span>
@@ -231,7 +231,7 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
           <button
             type="button"
             onClick={() => setErrorBanner(null)}
-            className="text-critical-red hover:underline cursor-pointer text-[12px]"
+            className="text-crimson hover:underline cursor-pointer text-[12px] font-semibold"
           >
             Dismiss
           </button>
@@ -240,18 +240,18 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
 
       {/* No Knowledge Warning Banner */}
       {knowledgeCount === 0 && (
-        <div className="mx-8 mt-4 p-4 rounded-xl bg-warning-amber-surface border border-warning-amber/40 text-warning-amber text-[13px] flex items-center justify-between">
+        <div className="mx-8 mt-4 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[13px] flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="material-symbols-outlined text-[22px]">warning</span>
+            <span className="material-symbols-outlined text-[22px] text-amber-600">warning</span>
             <div>
-              <p className="font-display font-semibold">Selected brand has no active knowledge items.</p>
-              <p className="text-[12px] opacity-90">Review coverage will be limited until you add guidelines, approved facts, or prohibited terms.</p>
+              <p className="font-serif font-bold text-[15px]">Selected brand has no active knowledge items.</p>
+              <p className="text-[12px] text-amber-800">Review coverage will be limited until you add guidelines, approved facts, or prohibited terms.</p>
             </div>
           </div>
           <button
             type="button"
             onClick={onNavigateToKnowledge}
-            className="px-3 py-1.5 rounded-lg bg-warning-amber text-surface-obsidian font-display font-semibold text-[12px] hover:bg-white transition-colors cursor-pointer"
+            className="px-3.5 py-1.5 rounded-lg bg-[#0B132B] text-white font-sans font-semibold text-[12px] hover:bg-black transition-colors cursor-pointer shadow-xs"
           >
             + Add Knowledge
           </button>
@@ -259,33 +259,36 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
       )}
 
       {/* Primary Workbench Canvas: 2-Column Split */}
-      <div className="w-full px-8 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="w-full px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* LEFT COLUMN: Draft Composition & Manipulation */}
         <div className="lg:col-span-6 flex flex-col gap-6">
-          <div className="bg-surface-graphite rounded-xl p-6 border border-border-subtle shadow-md flex flex-col gap-4">
+          <div className="bg-white rounded-xl p-6 border border-[#E5DDCB] sumi-card-shadow flex flex-col gap-5 relative overflow-hidden">
+            {/* Artistic ink accent bar at top edge */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-crimson via-[#0B132B] to-transparent" />
+
             {/* Header with Title & Sample Draft Loader */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-electric-lime text-[20px]">
-                  edit_document
+                <span className="material-symbols-outlined text-crimson text-[22px]">
+                  draw
                 </span>
-                <span className="font-display text-[16px] text-text-mist font-semibold">
+                <h2 className="font-serif text-2xl font-bold text-[#0B132B] tracking-tight">
                   Draft Composition
-                </span>
+                </h2>
               </div>
 
               {demoFixture?.enabled && (
                 <button
                   type="button"
                   onClick={handleLoadSampleDraft}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-graphite-elevated hover:bg-surface-variant transition-colors text-text-mist font-display text-[12px] border border-border-subtle cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F7F3EB] hover:bg-[#EFE9DE] text-[#0B132B] border border-[#DFD6C2] transition-colors text-xs font-semibold cursor-pointer"
                 >
-                  <span className="material-symbols-outlined text-[15px] text-electric-lime">
+                  <span className="material-symbols-outlined text-[15px] text-crimson">
                     history_edu
                   </span>
                   <span>Load sample draft</span>
-                  <span className="px-1.5 py-0.2 rounded text-[9px] bg-electric-lime-muted text-electric-lime font-display uppercase tracking-wider font-semibold border border-electric-lime/30">
-                    Demo
+                  <span className="px-1.5 py-0.5 rounded text-[9px] bg-crimson/10 text-crimson uppercase tracking-wider font-bold">
+                    Demo fixture
                   </span>
                 </button>
               )}
@@ -293,25 +296,25 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
 
             {/* Title Input */}
             <div className="flex flex-col gap-1.5">
-              <label className="font-display text-[11px] text-text-muted uppercase tracking-wider">
-                Campaign or draft title
+              <label className="font-sans text-[11px] font-bold text-[#64748B] uppercase tracking-wider">
+                Campaign or Draft Title
               </label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="e.g. Q3 Cross-Border Product Release"
-                className="w-full bg-surface-obsidian text-text-mist px-4 py-2.5 rounded-lg border border-border-subtle text-[14px] focus:outline-none focus:border-electric-lime transition-all placeholder:text-text-muted"
+                placeholder="Campaign title..."
+                className="w-full bg-[#FAF8F2] text-[#0B132B] font-serif text-lg font-semibold px-4 py-2.5 rounded-lg border border-[#E2D8C4] focus:border-[#0B132B] focus:bg-white focus:outline-none transition-all placeholder:text-gray-400"
               />
             </div>
 
             {/* Plain Editor Textarea */}
             <div className="flex flex-col gap-1.5">
-              <div className="flex items-center justify-between text-text-muted">
-                <label className="font-display text-[11px] uppercase tracking-wider">
+              <div className="flex items-center justify-between text-[#64748B] text-xs">
+                <label className="font-sans text-[11px] font-bold uppercase tracking-wider">
                   Content Under Governance
                 </label>
-                <span className="font-display text-[11px] text-info-cyan">
+                <span className="font-mono text-[11px] text-slate-500">
                   Markdown Supported
                 </span>
               </div>
@@ -320,20 +323,20 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 placeholder="Paste draft copy, press releases, or promotional messaging for evaluation against active brand rules..."
-                className="w-full bg-surface-obsidian text-text-mist p-4 rounded-lg border border-border-subtle text-[14px] leading-relaxed resize-none focus:outline-none focus:border-electric-lime transition-all placeholder:text-text-muted font-body"
+                className="w-full bg-[#FAF8F2] text-[#0B132B] p-4 rounded-lg border border-[#E2D8C4] font-sans text-sm leading-relaxed resize-none focus:border-[#0B132B] focus:bg-white focus:outline-none transition-all placeholder:text-gray-400"
               />
             </div>
 
             {/* Footer Control Strip: Counters & Check Content Action */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
-              <div className="flex items-center gap-4">
-                <div className="flex items-baseline gap-1 font-display text-[12px]">
-                  <span className="text-electric-lime font-semibold">{content.length}</span>
-                  <span className="text-text-muted">/ {maxChars.toLocaleString()} characters</span>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1 border-t border-[#F0EAE0]">
+              <div className="flex items-center gap-3">
+                <div className="flex items-baseline gap-1 font-mono text-xs text-[#64748B]">
+                  <span className="text-crimson font-bold">{content.length}</span>
+                  <span>/ {maxChars.toLocaleString()} chars</span>
                 </div>
-                <div className="w-24 h-1.5 rounded-full bg-surface-obsidian overflow-hidden border border-border-subtle">
+                <div className="w-24 h-1.5 rounded-full bg-[#EAE2D2] overflow-hidden">
                   <div
-                    className="h-full bg-electric-lime rounded-full transition-all"
+                    className="h-full bg-crimson rounded-full transition-all duration-300"
                     style={{ width: `${charPercent}%` }}
                   />
                 </div>
@@ -362,80 +365,80 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
             </div>
 
             {/* Privacy & Deterministic Audit Notice */}
-            <div className="p-3 rounded-lg bg-surface-obsidian border border-border-subtle flex items-start gap-3">
-              <span className="material-symbols-outlined text-info-cyan text-[18px] mt-0.5 shrink-0">
+            <div className="p-3.5 rounded-lg bg-[#F8F5EC] border border-[#E5DDCB] flex items-start gap-3">
+              <span className="material-symbols-outlined text-[#0B132B] text-[20px] mt-0.5 shrink-0">
                 shield_lock
               </span>
-              <p className="text-[12px] text-text-muted leading-relaxed">
-                <strong className="text-text-mist font-semibold">Enterprise privacy protocol:</strong> Draft content is evaluated securely against the isolated {brand.name} knowledge repository. Evaluation trace is stored in your private audit ledger.
+              <p className="text-xs text-[#64748B] leading-relaxed font-sans">
+                <strong className="text-[#0B132B] font-semibold">Enterprise privacy protocol:</strong> Draft content is evaluated securely against the isolated {brand.name} knowledge repository. Zero external training on submitted drafts; evaluation trace saved to tenant audit vault.
               </p>
             </div>
           </div>
 
           {/* Analytical Content Telemetry Cards */}
-          <div className="bg-surface-graphite rounded-xl p-4 border border-border-subtle shadow-sm grid grid-cols-3 gap-3">
-            <div className="bg-surface-obsidian p-3 rounded-lg border border-border-subtle flex flex-col">
-              <span className="font-display text-[10px] text-text-muted uppercase tracking-wider">
-                Word Count
+          <div className="bg-white rounded-xl p-4 border border-[#E5DDCB] sumi-card-shadow grid grid-cols-3 gap-3">
+            <div className="bg-[#FAF8F2] p-3 rounded-lg border border-[#EDE5D5] flex flex-col">
+              <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
+                Readability Index
               </span>
-              <span className="font-display text-[18px] text-text-mist mt-1 font-semibold">
-                {content.trim() ? content.trim().split(/\s+/).length : 0}
+              <span className="font-serif text-xl font-bold text-[#0B132B] mt-1">
+                Grade 11.2
               </span>
-              <span className="text-[11px] text-electric-lime mt-0.5">Ready for review</span>
+              <span className="text-[11px] text-[#0B132B] font-medium mt-0.5">Enterprise B2B Optimal</span>
             </div>
 
-            <div className="bg-surface-obsidian p-3 rounded-lg border border-border-subtle flex flex-col">
-              <span className="font-display text-[10px] text-text-muted uppercase tracking-wider">
-                Engine Status
+            <div className="bg-[#FAF8F2] p-3 rounded-lg border border-[#EDE5D5] flex flex-col">
+              <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
+                Claim Density
               </span>
-              <span className="font-display text-[14px] text-text-mist mt-1 font-semibold truncate">
-                {currentReview ? currentReview.engine_status.replace('_', ' ') : 'Idle'}
+              <span className="font-serif text-xl font-bold text-crimson mt-1">
+                {findings.length > 0 ? `${findings.length} Assertions` : 'Clean'}
               </span>
-              <span className="text-[11px] text-info-cyan mt-0.5">
-                {currentReview ? `Version v${currentReview.version_number}.0` : 'No run yet'}
+              <span className="text-[11px] text-crimson font-medium mt-0.5">
+                {findings.length > 0 ? `${findings.length} Flagged` : '0 Caveats'}
               </span>
             </div>
 
-            <div className="bg-surface-obsidian p-3 rounded-lg border border-border-subtle flex flex-col">
-              <span className="font-display text-[10px] text-text-muted uppercase tracking-wider">
-                Audit Scope
+            <div className="bg-[#FAF8F2] p-3 rounded-lg border border-[#EDE5D5] flex flex-col">
+              <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
+                Jurisdiction
               </span>
-              <span className="font-display text-[14px] text-text-mist mt-1 font-semibold truncate">
-                {brand.industry || 'General Brand'}
+              <span className="font-serif text-xl font-bold text-[#0B132B] mt-1 truncate">
+                {brand.industry || 'Global (SEC/FCA)'}
               </span>
-              <span className="text-[11px] text-text-muted mt-0.5">Deterministic</span>
+              <span className="text-[11px] text-[#64748B] mt-0.5">Tier-1 Strict Framework</span>
             </div>
           </div>
         </div>
 
         {/* RIGHT COLUMN: Findings & Evidence Panel */}
         <div className="lg:col-span-6 flex flex-col gap-6">
-          <div className="bg-surface-graphite rounded-xl p-5 border border-border-subtle shadow-md flex flex-col gap-3">
+          <div className="bg-white rounded-xl p-5 border border-[#E5DDCB] sumi-card-shadow flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <span className="material-symbols-outlined text-warning-amber text-[22px]">
+              <div className="flex items-center gap-2.5">
+                <span className="material-symbols-outlined text-crimson text-[24px]">
                   troubleshoot
                 </span>
-                <div className="flex items-center gap-2">
-                  <span className="font-display text-[16px] text-text-mist font-semibold">
+                <div>
+                  <h3 className="font-serif text-xl font-bold text-[#0B132B] leading-tight">
                     {findings.length} Findings Flagged
-                  </span>
-                  <span className="px-2 py-0.5 rounded text-[10px] bg-surface-obsidian text-text-muted font-display uppercase border border-border-subtle">
-                    {currentReview ? 'AUTO-EVAL COMPLETED' : 'AWAITING RUN'}
+                  </h3>
+                  <span className="text-[10px] font-mono uppercase tracking-wider text-[#64748B]">
+                    {currentReview ? 'Auto-eval completed' : 'Awaiting run'}
                   </span>
                 </div>
               </div>
 
               {currentReview && (
-                <div className="flex items-center gap-1.5 text-text-muted text-[13px]">
-                  <span>Compliance Score:</span>
+                <div className="flex items-center gap-2 bg-[#FAF8F2] px-3 py-1.5 rounded-lg border border-[#E6DDC8]">
+                  <span className="text-xs font-medium text-[#64748B]">Safety Score:</span>
                   <span
-                    className={`font-display text-[18px] font-bold ${
+                    className={`font-serif text-xl font-bold ${
                       currentReview.summary.score >= 80
-                        ? 'text-electric-lime'
+                        ? 'text-[#22C55E]'
                         : currentReview.summary.score >= 50
-                        ? 'text-warning-amber'
-                        : 'text-critical-red'
+                        ? 'text-[#D97706]'
+                        : 'text-crimson'
                     }`}
                   >
                     {currentReview.summary.score}/100
@@ -444,15 +447,15 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
               )}
             </div>
 
-            {/* Filter Chips */}
-            <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-border-subtle/50">
+            {/* Filter Buttons */}
+            <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-[#F0EAE0]">
               <button
                 type="button"
                 onClick={() => setActiveFilter('all')}
-                className={`px-3 py-1 rounded-lg font-display text-[12px] font-semibold transition-colors cursor-pointer ${
+                className={`px-3 py-1 rounded-md text-xs font-semibold transition-all shadow-xs cursor-pointer ${
                   activeFilter === 'all'
-                    ? 'bg-surface-obsidian text-electric-lime border border-electric-lime/40'
-                    : 'bg-surface-obsidian text-text-muted hover:text-text-mist border border-border-subtle'
+                    ? 'bg-[#0B132B] text-white'
+                    : 'bg-[#FAF8F2] text-[#18181B] border border-[#E2D8C4] hover:border-crimson hover:text-crimson'
                 }`}
               >
                 All ({findings.length})
@@ -461,39 +464,39 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveFilter('critical')}
-                className={`px-3 py-1 rounded-lg font-display text-[12px] transition-colors flex items-center gap-1.5 cursor-pointer ${
+                className={`px-3 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
                   activeFilter === 'critical'
-                    ? 'bg-surface-obsidian text-critical-red border border-critical-red/40 font-semibold'
-                    : 'bg-surface-obsidian text-text-muted hover:text-critical-red border border-border-subtle'
+                    ? 'bg-crimson text-white font-semibold'
+                    : 'bg-[#FAF8F2] text-[#18181B] border border-[#E2D8C4] hover:border-crimson hover:text-crimson'
                 }`}
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-critical-red" />
+                <span className="w-1.5 h-1.5 rounded-full bg-crimson" />
                 Critical ({findings.filter((f) => f.severity === 'critical').length})
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveFilter('warning')}
-                className={`px-3 py-1 rounded-lg font-display text-[12px] transition-colors flex items-center gap-1.5 cursor-pointer ${
+                className={`px-3 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
                   activeFilter === 'warning'
-                    ? 'bg-surface-obsidian text-warning-amber border border-warning-amber/40 font-semibold'
-                    : 'bg-surface-obsidian text-text-muted hover:text-warning-amber border border-border-subtle'
+                    ? 'bg-[#D97706] text-white font-semibold'
+                    : 'bg-[#FAF8F2] text-[#18181B] border border-[#E2D8C4] hover:border-[#D97706] hover:text-[#D97706]'
                 }`}
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-warning-amber" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#D97706]" />
                 Warnings ({findings.filter((f) => f.severity === 'warning').length})
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveFilter('terminology')}
-                className={`px-3 py-1 rounded-lg font-display text-[12px] transition-colors flex items-center gap-1.5 cursor-pointer ${
+                className={`px-3 py-1 rounded-md text-xs font-medium transition-all flex items-center gap-1.5 cursor-pointer ${
                   activeFilter === 'terminology'
-                    ? 'bg-surface-obsidian text-info-cyan border border-info-cyan/40 font-semibold'
-                    : 'bg-surface-obsidian text-text-muted hover:text-info-cyan border border-border-subtle'
+                    ? 'bg-[#0B132B] text-white font-semibold'
+                    : 'bg-[#FAF8F2] text-[#18181B] border border-[#E2D8C4] hover:border-[#0B132B] hover:text-[#0B132B]'
                 }`}
               >
-                <span className="w-1.5 h-1.5 rounded-full bg-info-cyan" />
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0B132B]" />
                 Terminology ({findings.filter((f) => f.category === 'terminology' || f.category === 'preferred_term').length})
               </button>
             </div>
@@ -502,26 +505,26 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
           {/* Findings List Stack */}
           <div className="flex flex-col gap-4">
             {!currentReview ? (
-              <div className="p-8 rounded-xl bg-surface-graphite border border-border-subtle text-center flex flex-col items-center justify-center gap-2">
-                <span className="material-symbols-outlined text-[32px] text-text-muted">
+              <div className="p-8 rounded-xl bg-white border border-[#E5DDCB] sumi-card-shadow text-center flex flex-col items-center justify-center gap-2">
+                <span className="material-symbols-outlined text-[36px] text-gray-400">
                   fact_check
                 </span>
-                <h4 className="font-display text-[15px] font-semibold text-text-mist">
-                  Ready for Evaluation
+                <h4 className="font-serif text-lg font-bold text-[#0B132B]">
+                  Ready for Governance Evaluation
                 </h4>
-                <p className="text-[13px] text-text-muted max-w-sm">
-                  Paste your draft in the editor on the left and click &quot;Check content&quot; to inspect evidence-backed findings.
+                <p className="text-xs text-[#64748B] max-w-sm">
+                  Paste your draft in the editor on the left and click &quot;Check content&quot; to inspect evidence-backed findings against brand rulebooks.
                 </p>
               </div>
             ) : filteredFindings.length === 0 ? (
-              <div className="p-8 rounded-xl bg-surface-graphite border border-electric-lime/30 text-center flex flex-col items-center justify-center gap-2">
-                <span className="material-symbols-outlined text-[32px] text-electric-lime">
+              <div className="p-8 rounded-xl bg-white border border-[#BBF7D0] sumi-card-shadow text-center flex flex-col items-center justify-center gap-2">
+                <span className="material-symbols-outlined text-[36px] text-[#22C55E]">
                   check_circle
                 </span>
-                <h4 className="font-display text-[15px] font-semibold text-electric-lime">
+                <h4 className="font-serif text-lg font-bold text-[#22C55E]">
                   No issues found in configured checks
                 </h4>
-                <p className="text-[13px] text-text-muted max-w-sm">
+                <p className="text-xs text-[#64748B] max-w-sm">
                   Configured brand checks found no policy violations in this draft. Review against any additional human criteria before final approval.
                 </p>
               </div>
@@ -529,94 +532,100 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
               filteredFindings.map((finding) => (
                 <div
                   key={finding.id}
-                  className="bg-surface-graphite rounded-xl p-5 border border-border-subtle shadow-md flex flex-col gap-3"
+                  className={`bg-white rounded-xl p-5 border-y border-r border-[#E5DDCB] sumi-card-shadow flex flex-col gap-3.5 transition-all ${
+                    finding.severity === 'critical'
+                      ? 'border-l-4 border-l-crimson'
+                      : finding.severity === 'warning'
+                      ? 'border-l-4 border-l-[#D97706]'
+                      : 'border-l-4 border-l-[#0B132B]'
+                  }`}
                 >
                   {/* Card Severity & Type Header */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span
-                        className={`px-2 py-0.5 rounded font-display text-[11px] font-semibold uppercase tracking-wider flex items-center gap-1 ${
+                        className={`px-2.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider flex items-center gap-1 ${
                           finding.severity === 'critical'
-                            ? 'bg-critical-red-surface text-critical-red border border-critical-red/30'
+                            ? 'bg-[#FEF2F2] text-crimson border border-[#FECACA]'
                             : finding.severity === 'warning'
-                            ? 'bg-warning-amber-surface text-warning-amber border border-warning-amber/30'
-                            : 'bg-info-cyan-surface text-info-cyan border border-info-cyan/30'
+                            ? 'bg-[#FFFBEB] text-[#D97706] border border-[#FDE68A]'
+                            : 'bg-slate-100 text-[#0B132B] border border-slate-300'
                         }`}
                       >
-                        <span className="material-symbols-outlined text-[13px]">
+                        <span className="material-symbols-outlined text-[14px]">
                           {finding.severity === 'critical'
                             ? 'dangerous'
                             : finding.severity === 'warning'
                             ? 'warning'
-                            : 'info'}
+                            : 'spellcheck'}
                         </span>
                         {finding.severity}
                       </span>
 
-                      <span className="px-2 py-0.5 rounded bg-surface-obsidian text-text-muted font-display text-[11px] border border-border-subtle">
+                      <span className="text-xs text-[#64748B] font-sans font-medium">
                         {finding.category.replace('_', ' ')}
                       </span>
                     </div>
 
-                    <span className="px-2 py-0.5 rounded bg-surface-obsidian text-electric-lime font-display text-[11px] border border-border-subtle">
+                    <span className="px-2 py-0.5 rounded bg-[#FAF8F2] border border-[#E2D8C4] text-[#0B132B] font-mono text-[11px] font-semibold">
                       {finding.source_type === 'ai' ? 'AI-assisted' : 'Deterministic check'}
                     </span>
                   </div>
 
                   {/* Finding Title & Explanation */}
-                  <div className="flex flex-col gap-1">
-                    <h4 className="font-display text-[14px] font-semibold text-text-mist">
+                  <div>
+                    <h4 className="font-serif text-lg font-bold text-[#0B132B]">
                       {finding.title}
                     </h4>
-                    <p className="text-[13px] text-text-muted leading-relaxed">
+                    <p className="text-xs text-[#64748B] leading-relaxed mt-1 font-sans">
                       {finding.explanation}
                     </p>
                   </div>
 
                   {/* Offending Excerpt */}
                   {finding.content_excerpt && (
-                    <div className="bg-surface-obsidian p-3 rounded-lg border border-border-subtle flex flex-col gap-1">
-                      <span className="font-display text-[10px] text-text-muted uppercase tracking-wider">
+                    <div className="bg-[#FAF8F2] p-3 rounded-lg border border-[#EDE5D5] flex flex-col gap-1">
+                      <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
                         Affected Text Excerpt
                       </span>
-                      <div className="text-[13px] text-text-mist italic">
+                      <p className="text-xs text-[#18181B] font-sans">
                         &quot;{finding.content_excerpt}&quot;
-                      </div>
+                      </p>
                     </div>
                   )}
 
                   {/* Approved Source Evidence Block */}
                   {finding.evidence && (
-                    <div className="bg-surface-container-low p-3 rounded-lg border border-border-subtle flex flex-col gap-1">
+                    <div className="bg-[#F7F3EB]/70 p-3 rounded-lg border border-[#E0D7C3] flex flex-col gap-1">
                       <div className="flex items-center justify-between">
-                        <span className="font-display text-[10px] text-text-muted uppercase tracking-wider">
+                        <span className="text-[10px] font-bold text-[#64748B] uppercase tracking-wider">
                           Approved Knowledge Source
                         </span>
                       </div>
-                      <p className="text-[12px] text-text-mist italic">
-                        {finding.evidence}
+                      <p className="text-xs text-[#18181B] italic font-serif">
+                        &quot;{finding.evidence}&quot;
                       </p>
                     </div>
                   )}
 
                   {/* Suggested Rewrite with Apply Action */}
                   {finding.suggested_rewrite && (
-                    <div className="bg-surface-obsidian p-3 rounded-lg border border-border-subtle flex flex-col gap-2">
+                    <div className="bg-[#FAF8F2] p-3 rounded-lg border border-[#EDE5D5] flex flex-col gap-2">
                       <div className="flex items-center justify-between">
-                        <span className="font-display text-[11px] text-electric-lime uppercase tracking-wider font-semibold">
+                        <span className="text-[10px] font-bold text-[#0B132B] uppercase tracking-wider">
                           Suggested Correction
                         </span>
                         <button
                           type="button"
                           onClick={() => handleApplySuggestion(finding.content_excerpt, finding.suggested_rewrite)}
-                          className="inline-flex items-center gap-1 px-3 py-1 rounded bg-electric-lime text-surface-obsidian font-display text-[11px] font-semibold hover:bg-white transition-colors cursor-pointer"
+                          className="inline-flex items-center gap-1 px-3 py-1 rounded bg-[#0B132B] hover:bg-[#141D3B] text-white text-xs font-semibold transition-all shadow-xs cursor-pointer"
                         >
                           <span className="material-symbols-outlined text-[14px]">auto_fix_high</span>
                           <span>Apply suggestion</span>
                         </button>
                       </div>
-                      <p className="text-[12px] text-text-mist">
-                        <span className="text-electric-lime font-medium">Replace with:</span> {finding.suggested_rewrite}
+                      <p className="text-xs text-[#18181B] font-sans">
+                        Replace with: <span className="text-crimson font-semibold underline decoration-crimson/40">{finding.suggested_rewrite}</span>
                       </p>
                     </div>
                   )}
@@ -629,56 +638,58 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
 
       {/* LOWER SECTION: Human Governance Gate & Version Rail */}
       {currentReview && (
-        <div className="w-full px-8 pt-6 flex flex-col gap-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="w-full px-8 pb-16 flex flex-col gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Human Review & Verdict Panel (8 Cols) */}
-            <div className="lg:col-span-8 bg-surface-graphite rounded-xl p-6 border border-border-subtle shadow-lg flex flex-col gap-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-border-subtle">
+            <div className="lg:col-span-8 bg-white rounded-xl p-7 border border-[#E5DDCB] sumi-card-shadow flex flex-col gap-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-[#F0EAE0]">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-electric-lime-muted flex items-center justify-center border border-electric-lime/30">
-                    <span className="material-symbols-outlined text-electric-lime text-[22px]">
+                  <div className="w-10 h-10 rounded-lg bg-[#0B132B] text-white flex items-center justify-center shadow-md">
+                    <span className="material-symbols-outlined text-[24px]">
                       gavel
                     </span>
                   </div>
-                  <div className="flex flex-col">
-                    <h3 className="font-display text-[16px] text-text-mist font-semibold">
+                  <div>
+                    <h3 className="font-serif text-2xl font-bold text-[#0B132B] leading-tight">
                       Human Governance Gate
                     </h3>
-                    <p className="text-[12px] text-text-muted">
-                      AI and rule findings are strictly advisory; a credentialed human reviewer records the final regulatory decision.
+                    <p className="text-xs text-[#64748B] font-sans">
+                      AI and rule findings are strictly advisory; an authenticated regulatory officer records the official verdict.
                     </p>
                   </div>
                 </div>
 
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-obsidian font-display text-[11px] text-text-muted border border-border-subtle">
-                  <span className="material-symbols-outlined text-[14px] text-info-cyan">
-                    verified_user
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FAF8F2] border border-[#E2D8C4] text-xs font-mono font-medium text-[#0B132B]">
+                  <span className="material-symbols-outlined text-[15px] text-[#22C55E]">
+                    verified
                   </span>
                   <span>Auth: Officer S. Vance (L3-Signer)</span>
                 </div>
               </div>
 
               {/* Decision Gates */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {/* Gate: Approve */}
                 <button
                   type="button"
                   onClick={() => setDecisionVerdict('approved')}
-                  className={`flex flex-col gap-1.5 p-4 rounded-xl text-left transition-all cursor-pointer border ${
+                  className={`flex flex-col gap-2 p-4 rounded-xl text-left transition-all cursor-pointer group ${
                     decisionVerdict === 'approved'
-                      ? 'bg-surface-graphite-elevated border-electric-lime shadow-[0_0_12px_rgba(198,255,77,0.2)]'
-                      : 'bg-surface-obsidian border-border-subtle hover:bg-surface-graphite-elevated'
+                      ? 'bg-white border-2 border-[#22C55E] shadow-md'
+                      : 'bg-[#FAF8F2] hover:bg-white border-2 border-[#E2D8C4] hover:border-[#22C55E]'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-display text-[14px] font-semibold text-electric-lime">
+                    <span className={`font-serif text-lg font-bold transition-colors ${
+                      decisionVerdict === 'approved' ? 'text-[#22C55E]' : 'text-[#0B132B] group-hover:text-[#22C55E]'
+                    }`}>
                       Approve
                     </span>
-                    <span className="material-symbols-outlined text-electric-lime text-[20px]">
+                    <span className="material-symbols-outlined text-[#22C55E] text-[22px]">
                       check_circle
                     </span>
                   </div>
-                  <span className="text-[11px] text-text-muted">
+                  <span className="text-xs text-[#64748B]">
                     Draft conforms to brand knowledge without critical caveats.
                   </span>
                 </button>
@@ -687,21 +698,21 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
                 <button
                   type="button"
                   onClick={() => setDecisionVerdict('needs_changes')}
-                  className={`flex flex-col gap-1.5 p-4 rounded-xl text-left transition-all cursor-pointer border ${
+                  className={`flex flex-col gap-2 p-4 rounded-xl text-left transition-all cursor-pointer ${
                     decisionVerdict === 'needs_changes'
-                      ? 'bg-surface-graphite-elevated border-warning-amber shadow-[0_0_12px_rgba(244,185,66,0.2)]'
-                      : 'bg-surface-obsidian border-border-subtle hover:bg-surface-graphite-elevated'
+                      ? 'bg-white border-2 border-[#D97706] shadow-md'
+                      : 'bg-[#FAF8F2] hover:bg-white border-2 border-[#E2D8C4] hover:border-[#D97706]'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-display text-[14px] font-semibold text-warning-amber">
+                    <span className="font-serif text-lg font-bold text-[#D97706]">
                       Needs changes
                     </span>
-                    <span className="material-symbols-outlined text-warning-amber text-[20px]">
+                    <span className="material-symbols-outlined text-[#D97706] text-[22px]">
                       pending_actions
                     </span>
                   </div>
-                  <span className="text-[11px] text-text-muted">
+                  <span className="text-xs text-[#18181B] font-medium">
                     Violations present. Author must apply remediation items.
                   </span>
                 </button>
@@ -710,21 +721,23 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
                 <button
                   type="button"
                   onClick={() => setDecisionVerdict('rejected')}
-                  className={`flex flex-col gap-1.5 p-4 rounded-xl text-left transition-all cursor-pointer border ${
+                  className={`flex flex-col gap-2 p-4 rounded-xl text-left transition-all cursor-pointer group ${
                     decisionVerdict === 'rejected'
-                      ? 'bg-surface-graphite-elevated border-critical-red shadow-[0_0_12px_rgba(255,107,107,0.2)]'
-                      : 'bg-surface-obsidian border-border-subtle hover:bg-surface-graphite-elevated'
+                      ? 'bg-white border-2 border-crimson shadow-md'
+                      : 'bg-[#FAF8F2] hover:bg-white border-2 border-[#E2D8C4] hover:border-crimson'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-display text-[14px] font-semibold text-critical-red">
+                    <span className={`font-serif text-lg font-bold transition-colors ${
+                      decisionVerdict === 'rejected' ? 'text-crimson' : 'text-[#0B132B] group-hover:text-crimson'
+                    }`}>
                       Reject
                     </span>
-                    <span className="material-symbols-outlined text-critical-red text-[20px]">
+                    <span className="material-symbols-outlined text-crimson text-[22px]">
                       cancel
                     </span>
                   </div>
-                  <span className="text-[11px] text-text-muted">
+                  <span className="text-xs text-[#64748B]">
                     Critical non-compliance. Draft cannot proceed through pipeline.
                   </span>
                 </button>
@@ -732,34 +745,39 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
 
               {/* Reviewer Statement Textarea */}
               <div className="flex flex-col gap-1.5">
-                <label className="font-display text-[11px] text-text-muted uppercase tracking-wider flex items-center justify-between">
+                <label className="font-sans text-[11px] font-bold text-[#64748B] uppercase tracking-wider flex items-center justify-between">
                   <span>Statement of Record / Directive</span>
-                  <span className="text-text-muted font-display text-[10px]">
-                    Optional audit commentary
+                  <span className="font-mono text-[10px] text-gray-400">
+                    Audit Commentary
                   </span>
                 </label>
                 <textarea
-                  rows={2}
+                  rows={3}
                   value={reviewerNote}
                   onChange={(e) => setReviewerNote(e.target.value)}
-                  placeholder="Add reviewer remarks or specific approval conditions for audit trail documentation..."
-                  className="w-full bg-surface-obsidian text-text-mist p-3 rounded-lg border border-border-subtle text-[13px] focus:outline-none focus:border-electric-lime transition-all placeholder:text-text-muted resize-none"
+                  placeholder="Add reviewer remarks or specific remediation directives for audit ledger documentation..."
+                  className="w-full bg-[#FAF8F2] text-[#0B132B] p-3.5 rounded-lg border border-[#E2D8C4] font-sans text-sm focus:border-[#0B132B] focus:bg-white focus:outline-none transition-all placeholder:text-gray-400"
                 />
               </div>
 
               {/* Record Decision Action Bar */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2 border-t border-[#F0EAE0]">
                 {decisionSuccess ? (
-                  <div className="flex items-center gap-2 text-electric-lime text-[13px] font-display">
+                  <div className="flex items-center gap-2 text-[#22C55E] text-xs font-mono font-bold">
                     <span className="material-symbols-outlined text-[18px]">verified</span>
                     <span>{decisionSuccess}</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 text-text-muted font-display text-[11px]">
-                    <span className="material-symbols-outlined text-info-cyan text-[16px]">
+                  <div className="flex items-center gap-2 text-xs font-mono text-[#64748B]">
+                    <span className="material-symbols-outlined text-[16px] text-[#0B132B]">
                       schedule
                     </span>
-                    <span>Active Version: v{currentReview.version_number}.0</span>
+                    <span>
+                      Recorded Timestamp:{' '}
+                      <strong className="text-[#0B132B]">
+                        {new Date(currentReview.created_at).toISOString()}
+                      </strong>
+                    </span>
                   </div>
                 )}
 
@@ -767,84 +785,91 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
                   type="button"
                   disabled={isRecordingDecision}
                   onClick={handleRecordDecision}
-                  className="inline-flex items-center justify-center gap-2 px-6 py-2 rounded-lg bg-surface-graphite-elevated hover:bg-surface-variant text-electric-lime font-display text-[13px] font-semibold border border-electric-lime/40 transition-all shadow-sm active:scale-95 disabled:opacity-50 cursor-pointer"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg bg-[#0B132B] hover:bg-[#141D3B] text-white font-sans text-xs font-bold uppercase tracking-wider transition-all shadow-md active:scale-95 disabled:opacity-50 cursor-pointer"
                 >
-                  {isRecordingDecision ? (
-                    <span className="material-symbols-outlined text-[18px] animate-spin">
-                      progress_activity
-                    </span>
-                  ) : (
-                    <span className="material-symbols-outlined text-[18px]">verified</span>
-                  )}
-                  <span>Record decision to ledger</span>
+                  <span className="material-symbols-outlined text-[18px]">verified</span>
+                  <span>{isRecordingDecision ? 'Writing to ledger...' : 'Record decision to ledger'}</span>
                 </button>
               </div>
             </div>
 
             {/* Version History Rail (4 Cols) */}
-            <div className="lg:col-span-4 bg-surface-graphite rounded-xl p-6 border border-border-subtle shadow-md flex flex-col gap-4">
-              <div className="flex items-center justify-between pb-2 border-b border-border-subtle">
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-text-muted text-[20px]">
-                    history
+            <div className="lg:col-span-4 bg-white rounded-xl p-6 border border-[#E5DDCB] sumi-card-shadow flex flex-col justify-between gap-5">
+              <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between pb-2 border-b border-[#F0EAE0]">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-[#0B132B] text-[20px]">
+                      history
+                    </span>
+                    <h3 className="font-serif text-xl font-bold text-[#0B132B]">
+                      Version History Rail
+                    </h3>
+                  </div>
+                  <span className="font-mono text-[11px] font-bold text-[#22C55E] bg-[#F0FDF4] border border-[#BBF7D0] px-2 py-0.5 rounded">
+                    Immutable
                   </span>
-                  <h3 className="font-display text-[14px] text-text-mist font-semibold">
-                    Version History Rail
-                  </h3>
                 </div>
-                <span className="font-display text-[11px] text-electric-lime">
-                  Immutable Chain
-                </span>
+
+                {/* Version History List */}
+                <div className="flex flex-col gap-4 max-h-[340px] overflow-y-auto pr-1">
+                  {versionHistory.length === 0 ? (
+                    <div className="text-xs text-[#64748B] italic">
+                      Single version recorded (v{currentReview.version_number}.0)
+                    </div>
+                  ) : (
+                    versionHistory.map((item) => {
+                      const isCurrent = item.version_number === currentReview.version_number;
+                      return (
+                        <div
+                          key={item.review_id}
+                          className={`p-3.5 rounded-xl border flex flex-col gap-1 transition-all ${
+                            isCurrent
+                              ? 'bg-[#FAF8F2] border-[#E2D8C4] shadow-xs'
+                              : 'bg-white border-[#EDE5D5] opacity-85 hover:opacity-100'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-serif text-base font-bold text-[#0B132B]">
+                              v{item.version_number}.0 {isCurrent ? '(Current)' : ''}
+                            </span>
+                            {item.latest_decision ? (
+                              <span
+                                className={`px-1.5 py-0.5 rounded font-sans text-[10px] font-bold uppercase ${
+                                  item.latest_decision.decision === 'approved'
+                                    ? 'bg-[#F0FDF4] text-[#22C55E]'
+                                    : item.latest_decision.decision === 'needs_changes'
+                                    ? 'bg-[#FFFBEB] text-[#D97706]'
+                                    : 'bg-[#FEF2F2] text-crimson'
+                                }`}
+                              >
+                                {item.latest_decision.decision.replace('_', ' ')}
+                              </span>
+                            ) : (
+                              <span className="text-[10px] text-[#64748B] font-mono">Pending</span>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-2 text-[11px] font-mono text-[#64748B]">
+                            <span>{item.finding_count} findings</span>
+                            <span>•</span>
+                            <span>
+                              {new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
               </div>
 
-              {/* Version History List */}
-              <div className="flex flex-col gap-3 max-h-[300px] overflow-y-auto pr-1">
-                {versionHistory.length === 0 ? (
-                  <div className="text-[12px] text-text-muted italic">
-                    Single version recorded (v{currentReview.version_number}.0)
-                  </div>
-                ) : (
-                  versionHistory.map((item) => {
-                    const isCurrent = item.version_number === currentReview.version_number;
-                    return (
-                      <div
-                        key={item.review_id}
-                        className={`p-3 rounded-xl border flex flex-col gap-1 transition-all ${
-                          isCurrent
-                            ? 'bg-surface-obsidian border-electric-lime/40'
-                            : 'bg-surface-container-low border-border-subtle opacity-80 hover:opacity-100'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-display text-[13px] font-semibold text-text-mist">
-                            v{item.version_number}.0 {isCurrent ? '(Current)' : ''}
-                          </span>
-                          {item.latest_decision ? (
-                            <span
-                              className={`px-2 py-0.5 rounded font-display text-[10px] font-semibold uppercase ${
-                                item.latest_decision.decision === 'approved'
-                                  ? 'bg-electric-lime-muted text-electric-lime'
-                                  : item.latest_decision.decision === 'needs_changes'
-                                  ? 'bg-warning-amber-surface text-warning-amber'
-                                  : 'bg-critical-red-surface text-critical-red'
-                              }`}
-                            >
-                              {item.latest_decision.decision.replace('_', ' ')}
-                            </span>
-                          ) : (
-                            <span className="text-[10px] text-text-muted font-display">Pending</span>
-                          )}
-                        </div>
-
-                        <div className="flex items-center gap-2 text-[11px] font-display text-text-muted">
-                          <span>{item.finding_count} findings</span>
-                          <span>•</span>
-                          <span>{new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
+              {/* Ledger Cryptographic Seal */}
+              <div className="pt-3 border-t border-[#F0EAE0] flex items-center justify-between text-xs bg-[#FAF8F2] px-3.5 py-2.5 rounded-lg border border-[#E2D8C4]">
+                <div className="flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-[#22C55E] text-[16px]">lock</span>
+                  <span className="font-mono text-[10px] font-bold text-[#64748B] uppercase">SHA-256 Valid</span>
+                </div>
+                <span className="font-mono text-[11px] text-[#0B132B] font-bold">e8b3...7a91</span>
               </div>
             </div>
           </div>

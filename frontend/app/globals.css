@@ -28,9 +28,9 @@
   }
 
   body {
-    background-color: var(--color-surface-obsidian);
-    color: var(--color-text-mist);
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #FDFBF7;
+    color: #18181B;
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     margin: 0;
     padding: 0;
   }

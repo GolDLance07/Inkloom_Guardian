@@ -82,13 +82,11 @@ export default function Home() {
     <>
       {showBootScreen && (
         <InitialLoadingScreen
-          brandName={selectedBrand?.name || 'Sovereign Core'}
-          isDataReady={!initialLoading}
           onComplete={() => setShowBootScreen(false)}
         />
       )}
 
-      <div className="min-h-screen bg-surface-obsidian text-text-mist flex">
+      <div className="min-h-screen bg-[#FDFBF7] text-[#18181B] flex">
         {/* Sidebar matching Stitch */}
         <AppSidebar
           brands={brands}
@@ -112,11 +110,11 @@ export default function Home() {
           {/* Dynamic Views */}
           <main className="w-full pt-16 flex-1 flex flex-col">
             {initialLoading ? (
-              <div className="flex flex-col items-center justify-center min-h-[70vh] gap-3 text-text-muted">
-                <span className="material-symbols-outlined text-[32px] text-electric-lime animate-spin">
+              <div className="flex flex-col items-center justify-center min-h-[70vh] gap-3 text-slate-500">
+                <span className="material-symbols-outlined text-[32px] text-crimson animate-spin">
                   progress_activity
                 </span>
-                <span className="font-display text-[14px]">Connecting to Inkloom Governance Engine...</span>
+                <span className="font-sans text-[14px] font-medium text-slate-600">Connecting to Inkloom Governance Engine...</span>
               </div>
             ) : (
             <>

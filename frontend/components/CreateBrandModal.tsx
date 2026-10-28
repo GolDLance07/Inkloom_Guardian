@@ -60,29 +60,31 @@ export const CreateBrandModal: React.FC<CreateBrandModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-      <div className="w-full max-w-lg bg-surface-graphite rounded-xl border border-border-strong p-6 shadow-2xl flex flex-col gap-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#070C1E]/60 backdrop-blur-sm p-4">
+      <div className="w-full max-w-lg bg-white rounded-xl border border-[#E5DDCB] p-6 shadow-2xl flex flex-col gap-4 text-[#18181B]">
         {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-electric-lime text-[24px]">
-              domain_add
-            </span>
-            <h3 className="font-display text-[18px] font-semibold text-text-mist">
+        <div className="flex items-center justify-between pb-3 border-b border-[#ECE7DD]">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-crimson flex items-center justify-center text-white shadow-sm">
+              <span className="material-symbols-outlined text-[20px]">
+                domain_add
+              </span>
+            </div>
+            <h3 className="font-editorial text-[20px] font-bold text-[#0B132B]">
               Create Brand Workspace
             </h3>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="text-text-muted hover:text-text-mist p-1 rounded-lg hover:bg-surface-obsidian transition-colors cursor-pointer"
+            className="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-[#F6F3EC] transition-colors cursor-pointer"
           >
             <span className="material-symbols-outlined text-[20px]">close</span>
           </button>
         </div>
 
         {error && (
-          <div className="p-3 rounded-lg bg-critical-red-surface border border-critical-red/30 text-critical-red text-[13px] flex items-center gap-2">
+          <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-crimson text-[13px] flex items-center gap-2">
             <span className="material-symbols-outlined text-[16px]">error</span>
             <span>{error}</span>
           </div>
@@ -90,9 +92,9 @@ export const CreateBrandModal: React.FC<CreateBrandModalProps> = ({
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Brand Name */}
-          <div className="flex flex-col gap-1">
-            <label className="font-display text-[11px] font-semibold uppercase tracking-wider text-text-muted">
-              Brand Name <span className="text-electric-lime">*</span>
+          <div className="flex flex-col gap-1.5">
+            <label className="font-sans text-[11px] font-bold uppercase tracking-wider text-slate-600">
+              Brand Name <span className="text-crimson">*</span>
             </label>
             <input
               type="text"
@@ -100,13 +102,13 @@ export const CreateBrandModal: React.FC<CreateBrandModalProps> = ({
               placeholder="e.g. Acme Enterprise Core, BioHealth Labs"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="bg-surface-obsidian text-text-mist px-3 py-2.5 rounded-lg border border-border-subtle text-[14px] focus:outline-none focus:border-electric-lime"
+              className="bg-[#FAF7F0] text-[#0B132B] px-3.5 py-2.5 rounded-lg border border-[#E5DDCB] text-[14px] focus:outline-none focus:border-crimson focus:ring-1 focus:ring-crimson transition-all"
             />
           </div>
 
           {/* Industry */}
-          <div className="flex flex-col gap-1">
-            <label className="font-display text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+          <div className="flex flex-col gap-1.5">
+            <label className="font-sans text-[11px] font-bold uppercase tracking-wider text-slate-600">
               Industry (Optional)
             </label>
             <input
@@ -114,13 +116,13 @@ export const CreateBrandModal: React.FC<CreateBrandModalProps> = ({
               placeholder="e.g. Fintech, Healthcare, Aerospace, SaaS"
               value={industry}
               onChange={(e) => setIndustry(e.target.value)}
-              className="bg-surface-obsidian text-text-mist px-3 py-2.5 rounded-lg border border-border-subtle text-[14px] focus:outline-none focus:border-electric-lime"
+              className="bg-[#FAF7F0] text-[#0B132B] px-3.5 py-2.5 rounded-lg border border-[#E5DDCB] text-[14px] focus:outline-none focus:border-crimson focus:ring-1 focus:ring-crimson transition-all"
             />
           </div>
 
           {/* Description */}
-          <div className="flex flex-col gap-1">
-            <label className="font-display text-[11px] font-semibold uppercase tracking-wider text-text-muted">
+          <div className="flex flex-col gap-1.5">
+            <label className="font-sans text-[11px] font-bold uppercase tracking-wider text-slate-600">
               Description (Optional)
             </label>
             <textarea
@@ -128,17 +130,17 @@ export const CreateBrandModal: React.FC<CreateBrandModalProps> = ({
               placeholder="Brief description of the brand's governance scope..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="bg-surface-obsidian text-text-mist px-3 py-2 rounded-lg border border-border-subtle text-[14px] focus:outline-none focus:border-electric-lime resize-none"
+              className="bg-[#FAF7F0] text-[#0B132B] px-3.5 py-2 rounded-lg border border-[#E5DDCB] text-[14px] focus:outline-none focus:border-crimson focus:ring-1 focus:ring-crimson transition-all resize-none"
             />
           </div>
 
           {/* Primary Accent Color Hint */}
-          <div className="flex items-center justify-between p-3 rounded-lg bg-surface-obsidian border border-border-subtle">
+          <div className="flex items-center justify-between p-3.5 rounded-lg bg-[#FAF7F0] border border-[#E5DDCB]">
             <div className="flex flex-col">
-              <span className="font-display text-[12px] font-semibold text-text-mist">
+              <span className="font-sans text-[12px] font-semibold text-[#0B132B]">
                 Identity Accent Color
               </span>
-              <span className="text-[11px] text-text-muted">
+              <span className="text-[11px] text-slate-500">
                 Visual presentation hint for the brand preview badge.
               </span>
             </div>
@@ -151,18 +153,18 @@ export const CreateBrandModal: React.FC<CreateBrandModalProps> = ({
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-border-subtle">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-[#ECE7DD]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg text-text-muted hover:text-text-mist hover:bg-surface-obsidian font-display text-[13px] transition-colors cursor-pointer"
+              className="px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-[#F6F3EC] font-sans text-[13px] font-semibold transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2 rounded-lg bg-electric-lime text-surface-obsidian font-display text-[13px] font-semibold hover:bg-white transition-all shadow-md active:scale-95 disabled:opacity-50 cursor-pointer flex items-center gap-2"
+              className="px-5 py-2 rounded-lg bg-crimson hover:bg-crimson-deep text-white font-sans text-[13px] font-bold tracking-wide uppercase transition-all shadow-md active:scale-95 disabled:opacity-50 cursor-pointer flex items-center gap-2"
             >
               {loading && <span className="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>}
               <span>Create Brand</span>

@@ -51,16 +51,16 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
         </div>
 
         {/* Brand Selector Dropdown */}
-        <div className="p-4 border-b border-border-subtle/40">
-          <div className="p-2.5 rounded-lg bg-surface-container-high border border-border-subtle">
-            <div className="flex items-center justify-between mb-2">
-              <span className="font-display text-[11px] font-semibold text-text-muted uppercase tracking-wider">
+        <div className="p-3.5">
+          <div className="p-2.5 rounded-lg bg-[#0F172A] border border-[#1E293B]">
+            <div className="flex items-center justify-between mb-1.5">
+              <span className="font-sans text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
                 Active Brand
               </span>
               <button
                 type="button"
                 onClick={onOpenCreateBrand}
-                className="font-display text-[11px] text-electric-lime hover:underline cursor-pointer"
+                className="font-sans text-[11px] text-red-400 hover:text-white transition-colors font-semibold cursor-pointer"
               >
                 + Create brand
               </button>
@@ -68,7 +68,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
 
             <div className="relative">
               <select
-                className="w-full bg-surface-graphite text-text-mist text-[13px] px-3 py-2 rounded-lg border border-border-subtle appearance-none cursor-pointer focus:outline-none focus:border-electric-lime"
+                className="w-full bg-[#0B132B] text-slate-100 text-[13px] font-medium px-3 py-2 rounded-md border border-[#334155] appearance-none cursor-pointer focus:outline-none focus:border-crimson"
                 value={selectedBrand?.id || ''}
                 onChange={(e) => {
                   const b = brands.find((x) => x.id === e.target.value);
@@ -85,7 +85,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
                   ))
                 )}
               </select>
-              <span className="material-symbols-outlined text-text-muted text-[16px] absolute right-2.5 top-2.5 pointer-events-none">
+              <span className="material-symbols-outlined text-slate-400 text-[16px] absolute right-2.5 top-2.5 pointer-events-none">
                 unfold_more
               </span>
             </div>
@@ -93,78 +93,77 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
         </div>
 
         {/* Navigation Menu */}
-        <nav className="px-3 flex flex-col gap-1 mt-4">
+        <nav className="px-2.5 flex flex-col gap-1 mt-1">
           <button
             type="button"
             onClick={() => setActiveTab('review')}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all cursor-pointer ${
+            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-left transition-all cursor-pointer ${
               activeTab === 'review'
-                ? 'bg-surface-graphite-elevated text-electric-lime font-medium border border-electric-lime/30'
-                : 'text-text-muted hover:bg-surface-graphite-elevated hover:text-text-mist'
+                ? 'bg-crimson text-white font-semibold shadow-sm'
+                : 'text-slate-300 hover:bg-[#0F172A] hover:text-white'
             }`}
           >
             <span className="material-symbols-outlined text-[20px]">policy</span>
-            <span className="font-display text-[13px] tracking-wide">Review</span>
+            <span className="font-sans text-[13px]">Review</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('knowledge')}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all cursor-pointer ${
+            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-left transition-all cursor-pointer ${
               activeTab === 'knowledge'
-                ? 'bg-surface-graphite-elevated text-electric-lime font-medium border border-electric-lime/30'
-                : 'text-text-muted hover:bg-surface-graphite-elevated hover:text-text-mist'
+                ? 'bg-crimson text-white font-semibold shadow-sm'
+                : 'text-slate-300 hover:bg-[#0F172A] hover:text-white'
             }`}
           >
             <span className="material-symbols-outlined text-[20px]">menu_book</span>
-            <span className="font-display text-[13px] tracking-wide">Brand knowledge</span>
+            <span className="font-sans text-[13px]">Brand knowledge</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('history')}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all cursor-pointer ${
+            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-left transition-all cursor-pointer ${
               activeTab === 'history'
-                ? 'bg-surface-graphite-elevated text-electric-lime font-medium border border-electric-lime/30'
-                : 'text-text-muted hover:bg-surface-graphite-elevated hover:text-text-mist'
+                ? 'bg-crimson text-white font-semibold shadow-sm'
+                : 'text-slate-300 hover:bg-[#0F172A] hover:text-white'
             }`}
           >
             <span className="material-symbols-outlined text-[20px]">history_toggle_off</span>
-            <span className="font-display text-[13px] tracking-wide">Review history</span>
+            <span className="font-sans text-[13px]">Review history</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('settings')}
-            className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-all cursor-pointer ${
+            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-left transition-all cursor-pointer ${
               activeTab === 'settings'
-                ? 'bg-surface-graphite-elevated text-electric-lime font-medium border border-electric-lime/30'
-                : 'text-text-muted hover:bg-surface-graphite-elevated hover:text-text-mist'
+                ? 'bg-crimson text-white font-semibold shadow-sm'
+                : 'text-slate-300 hover:bg-[#0F172A] hover:text-white'
             }`}
           >
             <span className="material-symbols-outlined text-[20px]">tune</span>
-            <span className="font-display text-[13px] tracking-wide">Brand settings</span>
+            <span className="font-sans text-[13px]">Brand settings</span>
           </button>
         </nav>
       </div>
 
       {/* Footer System Tier */}
-      <div className="p-4 border-t border-border-subtle bg-surface-obsidian/50">
-        <div className="p-3 rounded-lg bg-surface-obsidian flex flex-col gap-2 border border-border-subtle">
+      <div className="p-3.5">
+        <div className="p-3 rounded-lg bg-[#070C1E] border border-[#1E293B] flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
-              <span className="font-mono text-[10px] text-emerald-400 font-bold tracking-wider">
-                IMMUTABLE AUDIT
-              </span>
-            </div>
-            <span className="font-mono text-[10px] text-gray-400 bg-white/5 px-1.5 py-0.5 rounded">
-              v4.2 Ent
+            <span className="font-sans text-[11px] text-slate-400 uppercase tracking-wider font-semibold">
+              Workspace Tier
+            </span>
+            <span className="font-mono text-[11px] text-[#4ADE80] font-semibold uppercase">
+              V4.2 Enterprise
             </span>
           </div>
-          <div className="flex items-center gap-1.5 text-gray-400 text-[11px] font-mono">
-            <span className="material-symbols-outlined text-gray-500 text-[14px]">lock</span>
-            <span className="truncate">Sovereign Proof Engine</span>
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-blue-400 text-[16px]">lock</span>
+            <span className="text-[12px] text-slate-200 truncate font-medium">
+              Immutable Audit Mode
+            </span>
           </div>
         </div>
       </div>
