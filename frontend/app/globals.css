@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-surface-obsidian: #101211;
+    --color-surface-graphite: #242A26;
+    --color-surface-graphite-elevated: #2F3631;
+    --color-surface-container: #1E201F;
+    --color-surface-container-high: #282A29;
+    --color-surface-container-low: #1A1C1B;
+    --color-surface-container-lowest: #0D0F0E;
+    --color-surface-variant: #333534;
+    
+    --color-electric-lime: #C6FF4D;
+    --color-electric-lime-muted: #1F2E0E;
+    --color-text-mist: #F2F4EF;
+    --color-text-muted: #A8B0A7;
+
+    --color-warning-amber: #F4B942;
+    --color-warning-amber-surface: #2D2411;
+    --color-critical-red: #FF6B6B;
+    --color-critical-red-surface: #341B1C;
+    --color-info-cyan: #5CE1E6;
+    --color-info-cyan-surface: #122829;
+
+    --color-border-subtle: #363E38;
+    --color-border-strong: #4A544D;
+  }
+
+  body {
+    background-color: var(--color-surface-obsidian);
+    color: var(--color-text-mist);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+@theme {
+  --color-surface-obsidian: #101211;
+  --color-surface-graphite: #242A26;
+  --color-surface-graphite-elevated: #2F3631;
+  --color-surface-container: #1E201F;
+  --color-surface-container-high: #282A29;
+  --color-surface-container-low: #1A1C1B;
+  --color-surface-container-lowest: #0D0F0E;
+  --color-surface-variant: #333534;
+
+  --color-electric-lime: #C6FF4D;
+  --color-electric-lime-muted: #1F2E0E;
+  --color-text-mist: #F2F4EF;
+  --color-text-muted: #A8B0A7;
+
+  --color-warning-amber: #F4B942;
+  --color-warning-amber-surface: #2D2411;
+  --color-critical-red: #FF6B6B;
+  --color-critical-red-surface: #341B1C;
+  --color-info-cyan: #5CE1E6;
+  --color-info-cyan-surface: #122829;
+
+  --color-border-subtle: #363E38;
+  --color-border-strong: #4A544D;
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+.font-display {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.font-body {
+  font-family: 'Inter', sans-serif;
+}
+
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}

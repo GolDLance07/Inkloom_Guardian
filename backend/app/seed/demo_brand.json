@@ -1,0 +1,79 @@
+{
+  "brand": {
+    "name": "Acme Enterprise Core",
+    "slug": "acme-enterprise-core",
+    "description": "Institutional corporate treasury and cross-border settlement infrastructure.",
+    "industry": "Financial Technology & Enterprise Treasury",
+    "logo_url": null,
+    "visual_config": {
+      "primary_color": "#C6FF4D",
+      "secondary_color": "#242A26",
+      "accent_color": "#5CE1E6"
+    },
+    "is_demo": true
+  },
+  "knowledge_items": [
+    {
+      "kind": "fact",
+      "title": "Certified Operating Jurisdictions",
+      "content": "Acme Treasury provides compliant clearing services in 94 supported jurisdictions under sovereign banking charter approvals.",
+      "normalized_value": "94 countries",
+      "source_label": "KB-GEO-2024-v3",
+      "active": true,
+      "rule_config": {
+        "conflict_patterns": ["across 140 countries", "140 countries", "in 140 countries"],
+        "replacement": "across 94 fully certified sovereign jurisdictions"
+      },
+      "metadata": {
+        "category": "geographic_scope",
+        "verification_level": "legal_charter"
+      }
+    },
+    {
+      "kind": "prohibited_term",
+      "title": "Prohibited Absolute Risk Guarantees",
+      "content": "guaranteed zero foreign exchange risk",
+      "normalized_value": "guaranteed zero fx risk",
+      "source_label": "SEC-RULE-156 / COMP-402",
+      "active": true,
+      "rule_config": {
+        "aliases": ["zero foreign exchange risk", "guaranteed zero fx risk", "completely eliminates liquidity slippage"],
+        "replacement": "automated algorithmic hedging designed to mitigate FX exposure"
+      },
+      "metadata": {
+        "regulatory_ref": "COMP-402",
+        "risk_level": "critical"
+      }
+    },
+    {
+      "kind": "preferred_term",
+      "title": "Canonical Treasury Ledger Nomenclature",
+      "content": "Distributed Ledger Treasury Architecture",
+      "normalized_value": "crypto-rail",
+      "source_label": "Enterprise Brand Vocabulary v4",
+      "active": true,
+      "rule_config": {
+        "disallowed": ["crypto-rail", "crypto rail", "crypto rails"]
+      },
+      "metadata": {
+        "domain": "institutional_taxonomy"
+      }
+    },
+    {
+      "kind": "disclaimer",
+      "title": "Mandatory Cross-Border Regulatory Disclaimer",
+      "content": "Settlement timelines and clearing windows are subject to sovereign central bank clearing operational schedules.",
+      "normalized_value": "sovereign central bank clearing operational schedules",
+      "source_label": "Global Regulatory Mandate Annex 2",
+      "active": true,
+      "rule_config": {},
+      "metadata": {
+        "placement": "footer"
+      }
+    }
+  ],
+  "sample_draft": {
+    "title": "Q3 Cross-Border Global Liquidity Launch",
+    "content": "Acme Enterprise Core provides zero-latency settlements with guaranteed zero foreign exchange risk for all enterprise cross-border treasury movements across 140 countries. Our cutting-edge instant pipeline completely eliminates liquidity slippage regardless of local market volatility.\n\nSign up today to test our beta crypto-rail integration directly inside your corporate dashboard."
+  }
+}
