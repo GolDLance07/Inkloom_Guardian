@@ -42,6 +42,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origin_list,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -58,8 +59,10 @@ async def generic_exception_handler(request: Request, exc: Exception):
     )
 
 
-# Health Check Endpoint
+# Health Check Endpoints
+@app.get("/", tags=["system"])
 @app.get("/health", tags=["system"])
+@app.get("/api/v1/health", tags=["system"])
 def health_check():
     db_status = "connected"
     try:
