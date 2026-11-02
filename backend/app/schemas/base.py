@@ -140,10 +140,21 @@ class ReviewResponse(BaseModel):
     title: str
     content: str
     engine_status: str
+    retrieval_mode: Optional[str] = None
     created_at: datetime
     summary: FindingsSummary
     findings: List[FindingResponse] = []
     latest_decision: Optional[DecisionResponse] = None
+
+
+class AssetInspectionResponse(BaseModel):
+    brand_id: str
+    filename: str
+    extracted_text: str
+    ocr_confidence: Optional[float] = None
+    processing_status: str
+    findings: List[Dict[str, Any]] = []
+    limitations: str
 
 
 class ReviewGroupHistoryItem(BaseModel):

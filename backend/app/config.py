@@ -1,6 +1,6 @@
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from typing import List
+from typing import List, Optional
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 env_files = [str(BACKEND_DIR / ".env"), ".env"]
@@ -18,6 +18,9 @@ class Settings(BaseSettings):
     LLM_TIMEOUT_SECONDS: int = 20
     MAX_CONTENT_CHARS: int = 12000
     ENABLE_DEMO_SEED: bool = True
+    EMBEDDING_MODEL: str = "text-embedding-004"
+    MAX_IMAGE_UPLOAD_BYTES: int = 10485760  # 10MB
+    TESSERACT_CMD: Optional[str] = None
 
     @property
     def cors_origin_list(self) -> List[str]:

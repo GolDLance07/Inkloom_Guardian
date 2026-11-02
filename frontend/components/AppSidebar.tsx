@@ -7,8 +7,8 @@ interface AppSidebarProps {
   brands: Brand[];
   selectedBrand: Brand | null;
   onSelectBrand: (brand: Brand) => void;
-  activeTab: 'review' | 'knowledge' | 'history' | 'settings';
-  setActiveTab: (tab: 'review' | 'knowledge' | 'history' | 'settings') => void;
+  activeTab: 'review' | 'knowledge' | 'assets' | 'history' | 'settings';
+  setActiveTab: (tab: 'review' | 'knowledge' | 'assets' | 'history' | 'settings') => void;
   onOpenCreateBrand: () => void;
   engineActive: boolean;
 }
@@ -118,6 +118,19 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
           >
             <span className="material-symbols-outlined text-[20px]">menu_book</span>
             <span className="font-sans text-[13px]">Brand knowledge</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveTab('assets')}
+            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-left transition-all cursor-pointer ${
+              activeTab === 'assets'
+                ? 'bg-crimson text-white font-semibold shadow-sm'
+                : 'text-slate-300 hover:bg-[#0F172A] hover:text-white'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[20px]">photo_library</span>
+            <span className="font-sans text-[13px]">Asset inspection</span>
           </button>
 
           <button

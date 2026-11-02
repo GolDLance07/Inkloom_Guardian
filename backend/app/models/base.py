@@ -2,6 +2,7 @@ import uuid
 from datetime import datetime, timezone
 from sqlalchemy import Column, String, Text, Boolean, Integer, DateTime, ForeignKey, JSON
 from sqlalchemy.orm import relationship
+from pgvector.sqlalchemy import Vector
 from app.db import Base
 
 
@@ -33,6 +34,7 @@ class Brand(Base):
     findings = relationship("Finding", back_populates="brand", cascade="all, delete-orphan")
     decisions = relationship("Decision", back_populates="brand", cascade="all, delete-orphan")
     audit_events = relationship("AuditEvent", back_populates="brand", cascade="all, delete-orphan")
+    knowledge_embeddings = relationship("KnowledgeEmbedding", back_populates="brand", cascade="all, delete-orphan")
 
 
 class KnowledgeItem(Base):
@@ -53,6 +55,7 @@ class KnowledgeItem(Base):
 
     brand = relationship("Brand", back_populates="knowledge_items")
     findings = relationship("Finding", back_populates="knowledge_item")
+    embedding = relationship("KnowledgeEmbedding", uselist=False, back_populates="knowledge_item", cascade="all, delete-orphan")
 
 
 class ReviewGroup(Base):
@@ -76,6 +79,7 @@ class Review(Base):
     version_number = Column(Integer, nullable=False)
     content = Column(Text, nullable=False)
     engine_status = Column(String(50), nullable=False, default="rules_only")
+    retrieval_mode = Column(String(50), nullable=True, default=None)
     created_at = Column(DateTime(timezone=True), nullable=False, default=utc_now)
 
     brand = relationship("Brand", back_populates="reviews")
@@ -135,3 +139,18 @@ class AuditEvent(Base):
     created_at = Column(DateTime(timezone=True), nullable=False, default=utc_now)
 
     brand = relationship("Brand", back_populates="audit_events")
+
+
+class KnowledgeEmbedding(Base):
+    __tablename__ = "knowledge_embeddings"
+
+    id = Column(String(36), primary_key=True, default=generate_uuid)
+    knowledge_item_id = Column(String(36), ForeignKey("knowledge_items.id", ondelete="CASCADE"), nullable=False, unique=True, index=True)
+    brand_id = Column(String(36), ForeignKey("brands.id", ondelete="CASCADE"), nullable=False, index=True)
+    embedding = Column(Vector(768), nullable=False)
+    model_version = Column(String(100), nullable=False, default="text-embedding-004")
+    created_at = Column(DateTime(timezone=True), nullable=False, default=utc_now)
+    updated_at = Column(DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now)
+
+    knowledge_item = relationship("KnowledgeItem", back_populates="embedding")
+    brand = relationship("Brand", back_populates="knowledge_embeddings")

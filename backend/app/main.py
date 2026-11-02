@@ -10,6 +10,7 @@ from app.api.v1.brands import router as brands_router
 from app.api.v1.knowledge import router as knowledge_router
 from app.api.v1.reviews import router as reviews_router
 from app.api.v1.decisions import router as decisions_router
+from app.api.v1.assets import router as assets_router
 from app.seed.seed_demo import seed_demo_data
 
 logging.basicConfig(level=logging.INFO)
@@ -109,3 +110,4 @@ app.include_router(brands_router, prefix="/api/v1")
 app.include_router(knowledge_router, prefix="/api/v1")
 app.include_router(reviews_router, prefix="/api/v1")
 app.include_router(decisions_router, prefix="/api/v1")
+app.include_router(assets_router, prefix="/api/v1")

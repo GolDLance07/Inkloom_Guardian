@@ -8,7 +8,7 @@ services:
       - "8000:8000"
     environment:
       - APP_ENV=production
-      - DATABASE_URL=postgresql://neondb_owner:npg_gY5pGvVqS3yC@ep-aged-frog-a10w5547-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require
+      - DATABASE_URL=${DATABASE_URL:-sqlite:///./inkloom.db}
       - LLM_PROVIDER=gemini
       - LLM_API_KEY=${LLM_API_KEY:-}
       - LLM_MODEL=gemini-3.6-flash

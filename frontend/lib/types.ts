@@ -106,10 +106,35 @@ export interface Review {
   title: string;
   content: string;
   engine_status: 'rules_only' | 'rules_and_ai' | 'ai_unavailable';
+  retrieval_mode?: 'vector' | 'lexical_fallback' | 'all' | string | null;
   created_at: string;
   summary: FindingsSummary;
   findings: Finding[];
   latest_decision?: Decision | null;
+}
+
+export interface AssetFinding {
+  id?: string;
+  knowledge_item_id?: string | null;
+  source_type: string;
+  category: string;
+  severity: 'critical' | 'warning' | 'info';
+  claim_status?: string | null;
+  title: string;
+  explanation: string;
+  evidence?: string | null;
+  content_excerpt?: string | null;
+  suggested_rewrite?: string | null;
+}
+
+export interface AssetInspectionResult {
+  brand_id: string;
+  filename: string;
+  extracted_text: string;
+  ocr_confidence?: number | null;
+  processing_status: 'success' | 'no_text_detected' | 'ocr_unavailable' | 'ocr_error' | string;
+  findings: AssetFinding[];
+  limitations: string;
 }
 
 export interface ReviewGroupHistoryItem {

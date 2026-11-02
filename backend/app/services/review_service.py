@@ -4,6 +4,7 @@ from sqlalchemy import desc
 from app.models.base import ReviewGroup, Review, Finding, KnowledgeItem, Decision, Brand
 from app.services.rules_engine import run_deterministic_checks
 from app.services.llm_provider import run_ai_review
+from app.services.embedding_service import retrieve_relevant_knowledge
 from app.services.audit_service import record_audit_event
 
 
@@ -51,12 +52,14 @@ async def execute_review(
         KnowledgeItem.active == True,
     ).all()
 
-    # 4. Run deterministic checks
+    # 4. Run deterministic checks against ALL active brand items
     findings_data = run_deterministic_checks(content, items)
 
-    # 5. Optional AI checks
+    # 5. Optional AI checks with RAG knowledge subset
     engine_status = "rules_only"
+    retrieval_mode = None
     if run_ai:
+        ai_items, retrieval_mode = retrieve_relevant_knowledge(db, brand_id, content, limit=10)
         items_dict = [
             {
                 "id": it.id,
@@ -65,7 +68,7 @@ async def execute_review(
                 "content": it.content,
                 "source_label": it.source_label,
             }
-            for it in items
+            for it in ai_items
         ]
         ai_findings = await run_ai_review(content, brand.name, items_dict)
         if ai_findings is not None:
@@ -81,6 +84,7 @@ async def execute_review(
         version_number=version_number,
         content=content,
         engine_status=engine_status,
+        retrieval_mode=retrieval_mode,
     )
     db.add(review)
     db.flush()
@@ -117,6 +121,7 @@ async def execute_review(
         details={
             "version_number": version_number,
             "engine_status": engine_status,
+            "retrieval_mode": retrieval_mode,
             "finding_count": len(findings_data),
         },
     )
@@ -143,6 +148,7 @@ def format_review_response(review: Review, db: Session) -> Dict[str, Any]:
         "title": group.title if group else "Untitled Draft",
         "content": review.content,
         "engine_status": review.engine_status,
+        "retrieval_mode": getattr(review, "retrieval_mode", None),
         "created_at": review.created_at,
         "summary": {
             "total": len(findings),

@@ -430,19 +430,38 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
               </div>
 
               {currentReview && (
-                <div className="flex items-center gap-2 bg-[#FAF8F2] px-3 py-1.5 rounded-lg border border-[#E6DDC8]">
-                  <span className="text-xs font-medium text-[#64748B]">Safety Score:</span>
-                  <span
-                    className={`font-serif text-xl font-bold ${
-                      currentReview.summary.score >= 80
-                        ? 'text-[#22C55E]'
-                        : currentReview.summary.score >= 50
-                        ? 'text-[#D97706]'
-                        : 'text-crimson'
-                    }`}
-                  >
-                    {currentReview.summary.score}/100
-                  </span>
+                <div className="flex items-center gap-2">
+                  {currentReview.retrieval_mode && (
+                    <div
+                      className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#FAF8F2] border border-[#E6DDC8] text-[11px] font-mono text-[#475569]"
+                      title={`Context retrieval mode: ${currentReview.retrieval_mode}`}
+                    >
+                      <span className="material-symbols-outlined text-[14px] text-crimson">
+                        travel_explore
+                      </span>
+                      <span>
+                        {currentReview.retrieval_mode === 'vector'
+                          ? 'RAG: Vector'
+                          : currentReview.retrieval_mode === 'lexical_fallback'
+                          ? 'RAG: Lexical'
+                          : 'RAG: Active'}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 bg-[#FAF8F2] px-3 py-1.5 rounded-lg border border-[#E6DDC8]">
+                    <span className="text-xs font-medium text-[#64748B]">Safety Score:</span>
+                    <span
+                      className={`font-serif text-xl font-bold ${
+                        currentReview.summary.score >= 80
+                          ? 'text-[#22C55E]'
+                          : currentReview.summary.score >= 50
+                          ? 'text-[#D97706]'
+                          : 'text-crimson'
+                      }`}
+                    >
+                      {currentReview.summary.score}/100
+                    </span>
+                  </div>
                 </div>
               )}
             </div>

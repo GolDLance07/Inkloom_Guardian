@@ -8,6 +8,7 @@ import { AppHeader } from '@/components/AppHeader';
 import { CreateBrandModal } from '@/components/CreateBrandModal';
 import { BrandReviewWorkbench } from '@/components/views/BrandReviewWorkbench';
 import { BrandKnowledgeRepository } from '@/components/views/BrandKnowledgeRepository';
+import { AssetInspectionView } from '@/components/views/AssetInspectionView';
 import { ReviewHistoryView } from '@/components/views/ReviewHistoryView';
 import { BrandSettingsView } from '@/components/views/BrandSettingsView';
 import { InitialLoadingScreen } from '@/components/InitialLoadingScreen';
@@ -15,7 +16,7 @@ import { InitialLoadingScreen } from '@/components/InitialLoadingScreen';
 export default function Home() {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<Brand | null>(null);
-  const [activeTab, setActiveTab] = useState<'review' | 'knowledge' | 'history' | 'settings'>('review');
+  const [activeTab, setActiveTab] = useState<'review' | 'knowledge' | 'assets' | 'history' | 'settings'>('review');
   const [health, setHealth] = useState<HealthStatus | null>(null);
   const [demoFixture, setDemoFixture] = useState<DemoFixture | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -128,6 +129,13 @@ export default function Home() {
 
               {activeTab === 'knowledge' && (
                 <BrandKnowledgeRepository brand={selectedBrand} />
+              )}
+
+              {activeTab === 'assets' && (
+                <AssetInspectionView
+                  brand={selectedBrand}
+                  onNavigateToKnowledge={() => setActiveTab('knowledge')}
+                />
               )}
 
               {activeTab === 'history' && (

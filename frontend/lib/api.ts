@@ -9,6 +9,7 @@ import {
   Decision,
   HealthStatus,
   DemoFixture,
+  AssetInspectionResult,
 } from './types';
 
 const rawBase = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000';
@@ -165,5 +166,32 @@ export const api = {
   // Demo Fixture
   async getDemoFixture(): Promise<DemoFixture> {
     return request<DemoFixture>('/api/v1/demo/fixture');
+  },
+
+  // Multi-Modal Asset Inspection
+  async inspectAssetImage(brandId: string, file: File): Promise<AssetInspectionResult> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const url = `${API_BASE}/api/v1/brands/${brandId}/assets/inspect-image`;
+    const response = await fetch(url, {
+      method: 'POST',
+      body: formData,
+    });
+
+    if (!response.ok) {
+      let errorMsg = `Upload failed with status ${response.status}`;
+      try {
+        const errorJson = await response.json();
+        if (errorJson.detail) {
+          errorMsg = typeof errorJson.detail === 'string' ? errorJson.detail : JSON.stringify(errorJson.detail);
+        }
+      } catch {
+        // default
+      }
+      throw new ApiError(errorMsg, response.status);
+    }
+
+    return (await response.json()) as AssetInspectionResult;
   },
 };

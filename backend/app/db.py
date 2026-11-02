@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 from app.config import settings
 
@@ -27,4 +27,12 @@ def get_db():
 
 
 def init_db():
+    if engine.dialect.name == "postgresql":
+        try:
+            with engine.connect() as conn:
+                conn.execute(text("CREATE EXTENSION IF NOT EXISTS vector;"))
+                conn.execute(text("ALTER TABLE reviews ADD COLUMN IF NOT EXISTS retrieval_mode VARCHAR(50);"))
+                conn.commit()
+        except Exception:
+            pass
     Base.metadata.create_all(bind=engine)

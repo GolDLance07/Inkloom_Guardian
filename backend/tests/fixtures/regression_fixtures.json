@@ -1,0 +1,276 @@
+{
+  "description": "Inkloom Guardian Automated Rule Regression Suite Fixtures",
+  "version": "1.0.0",
+  "test_cases": [
+    {
+      "id": "TC-001-prohibited-term",
+      "name": "Prohibited phrase detection with suggested replacement",
+      "brand_id": "brand-fixture-alpha",
+      "knowledge_items": [
+        {
+          "id": "k-prohib-1",
+          "brand_id": "brand-fixture-alpha",
+          "kind": "prohibited_term",
+          "title": "Unsubstantiated Guarantee Claim",
+          "content": "guaranteed 100% risk-free",
+          "source_label": "Legal Compliance v3",
+          "active": true,
+          "rule_config": {
+            "aliases": ["zero risk guarantee"],
+            "replacement": "backed by standard risk management protocols"
+          }
+        }
+      ],
+      "draft_text": "Invest with us today and enjoy guaranteed 100% risk-free portfolio yields.",
+      "expected_findings": [
+        {
+          "category": "prohibited_term",
+          "severity": "critical",
+          "knowledge_item_id": "k-prohib-1",
+          "claim_status": "contradicted",
+          "matched_phrase": "guaranteed 100% risk-free"
+        }
+      ],
+      "expect_rewrite": true
+    },
+    {
+      "id": "TC-002-preferred-terminology",
+      "name": "Disallowed colloquial term triggers preferred term suggestion",
+      "brand_id": "brand-fixture-alpha",
+      "knowledge_items": [
+        {
+          "id": "k-pref-1",
+          "brand_id": "brand-fixture-alpha",
+          "kind": "preferred_term",
+          "title": "Approved Cloud Platform Nomenclature",
+          "content": "Autonomous Governance Engine",
+          "source_label": "Brand Style Guide 2026",
+          "active": true,
+          "rule_config": {
+            "disallowed": ["bot script", "auto-checker tool"]
+          }
+        }
+      ],
+      "draft_text": "Our new bot script ensures that marketing copy complies with brand guidelines.",
+      "expected_findings": [
+        {
+          "category": "terminology",
+          "severity": "warning",
+          "knowledge_item_id": "k-pref-1",
+          "claim_status": "not_applicable",
+          "matched_phrase": "bot script"
+        }
+      ],
+      "expect_rewrite": true
+    },
+    {
+      "id": "TC-003-required-disclaimer-missing",
+      "name": "Missing required regulatory disclaimer flag",
+      "brand_id": "brand-fixture-alpha",
+      "knowledge_items": [
+        {
+          "id": "k-disc-1",
+          "brand_id": "brand-fixture-alpha",
+          "kind": "disclaimer",
+          "title": "Mandatory Investment Risk Disclaimer",
+          "content": "Past performance is not indicative of future results.",
+          "source_label": "SEC / FINRA Disclosure Standard",
+          "active": true,
+          "rule_config": {}
+        }
+      ],
+      "draft_text": "Our multi-asset fund gained 18.4% across the previous calendar fiscal year.",
+      "expected_findings": [
+        {
+          "category": "missing_disclaimer",
+          "severity": "warning",
+          "knowledge_item_id": "k-disc-1",
+          "claim_status": "unverified"
+        }
+      ],
+      "expect_rewrite": true
+    },
+    {
+      "id": "TC-004-required-phrase-satisfied",
+      "name": "Required phrase present in draft triggers zero findings",
+      "brand_id": "brand-fixture-alpha",
+      "knowledge_items": [
+        {
+          "id": "k-disc-2",
+          "brand_id": "brand-fixture-alpha",
+          "kind": "disclaimer",
+          "title": "Mandatory Investment Risk Disclaimer",
+          "content": "Past performance is not indicative of future results.",
+          "source_label": "SEC Disclosure Standard",
+          "active": true,
+          "rule_config": {}
+        }
+      ],
+      "draft_text": "Our multi-asset fund gained 18.4% last year. Note that past performance is not indicative of future results.",
+      "expected_findings": []
+    },
+    {
+      "id": "TC-005-fact-discrepancy",
+      "name": "Fact discrepancy regex conflict pattern detected",
+      "brand_id": "brand-fixture-alpha",
+      "knowledge_items": [
+        {
+          "id": "k-fact-1",
+          "brand_id": "brand-fixture-alpha",
+          "kind": "fact",
+          "title": "Global Datacenter Footprint",
+          "content": "Inkloom infrastructure operates across 14 geographic zones.",
+          "source_label": "Infrastructure Fact Sheet 2026",
+          "active": true,
+          "rule_config": {
+            "conflict_patterns": ["operating in 50\\+ countries", "over 50 datacenters"],
+            "replacement": "operating across 14 certified global regions"
+          }
+        }
+      ],
+      "draft_text": "With infrastructure operating in 50+ countries, we provide lowest latency.",
+      "expected_findings": [
+        {
+          "category": "fact_discrepancy",
+          "severity": "critical",
+          "knowledge_item_id": "k-fact-1",
+          "claim_status": "contradicted"
+        }
+      ],
+      "expect_rewrite": true
+    },
+    {
+      "id": "TC-006-clean-copy",
+      "name": "Fully compliant copy generates zero findings",
+      "brand_id": "brand-fixture-alpha",
+      "knowledge_items": [
+        {
+          "id": "k-clean-1",
+          "brand_id": "brand-fixture-alpha",
+          "kind": "prohibited_term",
+          "title": "Disallowed claim",
+          "content": "guaranteed profit",
+          "source_label": "Policy",
+          "active": true,
+          "rule_config": {}
+        },
+        {
+          "id": "k-clean-2",
+          "brand_id": "brand-fixture-alpha",
+          "kind": "preferred_term",
+          "title": "Approved product name",
+          "content": "Inkloom Core",
+          "source_label": "Taxonomy",
+          "active": true,
+          "rule_config": {"disallowed": ["Inkloom Classic"]}
+        }
+      ],
+      "draft_text": "Inkloom Core helps content teams manage brand governance with confidence.",
+      "expected_findings": []
+    },
+    {
+      "id": "TC-007-inactive-rule-suppression",
+      "name": "Deactivated rules must NOT trigger any findings",
+      "brand_id": "brand-fixture-alpha",
+      "knowledge_items": [
+        {
+          "id": "k-inactive-1",
+          "brand_id": "brand-fixture-alpha",
+          "kind": "prohibited_term",
+          "title": "Deprecated prohibition",
+          "content": "unlimited storage",
+          "source_label": "Legacy Policy",
+          "active": false,
+          "rule_config": {}
+        },
+        {
+          "id": "k-inactive-2",
+          "brand_id": "brand-fixture-alpha",
+          "kind": "disclaimer",
+          "title": "Retired disclosure",
+          "content": "Beta release disclaimer text",
+          "source_label": "Legacy Policy",
+          "active": false,
+          "rule_config": {}
+        }
+      ],
+      "draft_text": "Sign up for unlimited storage on our enterprise tier today.",
+      "expected_findings": []
+    },
+    {
+      "id": "TC-008-overlapping-rules",
+      "name": "Draft triggering multiple distinct rule categories simultaneously",
+      "brand_id": "brand-fixture-alpha",
+      "knowledge_items": [
+        {
+          "id": "k-multi-1",
+          "brand_id": "brand-fixture-alpha",
+          "kind": "prohibited_term",
+          "title": "No cure claims",
+          "content": "miracle cure",
+          "source_label": "FDA Compliance",
+          "active": true,
+          "rule_config": {}
+        },
+        {
+          "id": "k-multi-2",
+          "brand_id": "brand-fixture-alpha",
+          "kind": "preferred_term",
+          "title": "Approved supplement term",
+          "content": "Dietary Supplement",
+          "source_label": "Regulatory Guide",
+          "active": true,
+          "rule_config": {"disallowed": ["health potion"]}
+        },
+        {
+          "id": "k-multi-3",
+          "brand_id": "brand-fixture-alpha",
+          "kind": "disclaimer",
+          "title": "Mandatory Supplement Notice",
+          "content": "These statements have not been evaluated by the FDA.",
+          "source_label": "FDA Compliance",
+          "active": true,
+          "rule_config": {}
+        }
+      ],
+      "draft_text": "Our new health potion acts as a miracle cure for exhaustion.",
+      "expected_findings": [
+        {
+          "category": "prohibited_term",
+          "severity": "critical",
+          "knowledge_item_id": "k-multi-1"
+        },
+        {
+          "category": "terminology",
+          "severity": "warning",
+          "knowledge_item_id": "k-multi-2"
+        },
+        {
+          "category": "missing_disclaimer",
+          "severity": "warning",
+          "knowledge_item_id": "k-multi-3"
+        }
+      ]
+    },
+    {
+      "id": "TC-009-brand-isolation",
+      "name": "Brand-scoped isolation prevents cross-tenant rule enforcement",
+      "brand_id": "brand-fixture-beta",
+      "knowledge_items": [
+        {
+          "id": "k-brand-alpha-1",
+          "brand_id": "brand-fixture-alpha",
+          "kind": "prohibited_term",
+          "title": "Alpha Restricted Term",
+          "content": "proprietary quantum engine",
+          "source_label": "Alpha Policy",
+          "active": true,
+          "rule_config": {}
+        }
+      ],
+      "draft_text": "Our platform leverages a proprietary quantum engine for sub-millisecond routing.",
+      "filter_brand_id": "brand-fixture-beta",
+      "expected_findings": []
+    }
+  ]
+}

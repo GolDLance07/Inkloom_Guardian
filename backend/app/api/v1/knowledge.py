@@ -5,6 +5,7 @@ from app.db import get_db
 from app.models.base import Brand, KnowledgeItem
 from app.schemas.base import KnowledgeItemCreate, KnowledgeItemUpdate, KnowledgeItemResponse
 from app.services.audit_service import record_audit_event
+from app.services.embedding_service import generate_and_store_embedding
 
 router = APIRouter(prefix="/brands/{brand_id}/knowledge", tags=["knowledge"])
 
@@ -54,6 +55,18 @@ def create_knowledge_item(
     db.commit()
     db.refresh(item)
 
+    try:
+        generate_and_store_embedding(db, item)
+        db.commit()
+    except Exception:
+        pass
+
+    try:
+        generate_and_store_embedding(db, item)
+        db.commit()
+    except Exception:
+        pass
+
     record_audit_event(
         db=db,
         brand_id=brand.id,
@@ -87,6 +100,12 @@ def update_knowledge_item(
 
     db.commit()
     db.refresh(item)
+
+    try:
+        generate_and_store_embedding(db, item)
+        db.commit()
+    except Exception:
+        pass
 
     record_audit_event(
         db=db,
