@@ -7,9 +7,14 @@ import { api } from '@/lib/api';
 interface BrandSettingsViewProps {
   brand: Brand | null;
   onBrandUpdated: (updatedBrand: Brand) => void;
+  onBrandDeleted?: (brandId: string) => void;
 }
 
-export const BrandSettingsView: React.FC<BrandSettingsViewProps> = ({ brand, onBrandUpdated }) => {
+export const BrandSettingsView: React.FC<BrandSettingsViewProps> = ({
+  brand,
+  onBrandUpdated,
+  onBrandDeleted,
+}) => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [industry, setIndustry] = useState('');
@@ -18,6 +23,8 @@ export const BrandSettingsView: React.FC<BrandSettingsViewProps> = ({ brand, onB
   const [secondaryColor, setSecondaryColor] = useState('#242A26');
   const [isSaving, setIsSaving] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (brand) {
@@ -61,6 +68,21 @@ export const BrandSettingsView: React.FC<BrandSettingsViewProps> = ({ brand, onB
       setStatusMessage(`Error: ${err.message || 'Failed to save settings'}`);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDeleteBrand = async () => {
+    if (!brand || isDeleting) return;
+    try {
+      setIsDeleting(true);
+      await api.deleteBrand(brand.id);
+      setShowDeleteModal(false);
+      onBrandDeleted?.(brand.id);
+    } catch (err: any) {
+      setStatusMessage(`Error deleting brand: ${err.message || 'Action failed'}`);
+      setShowDeleteModal(false);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -244,9 +266,71 @@ export const BrandSettingsView: React.FC<BrandSettingsViewProps> = ({ brand, onB
                 Brand identity colors act as visual presentation hints and do not override accessible application contrast.
               </span>
             </div>
+
+            {/* Danger Zone */}
+            <div className="p-5 rounded-xl border border-red-200 bg-red-50/50 flex flex-col gap-3">
+              <div className="flex items-center gap-2 text-crimson font-serif font-bold text-[15px]">
+                <span className="material-symbols-outlined text-[20px]">delete_forever</span>
+                <span>Danger Zone</span>
+              </div>
+              <p className="text-xs text-slate-600 font-sans">
+                Permanently delete this brand workspace, including all configured rules, review snapshots, and audit logs.
+              </p>
+              <button
+                type="button"
+                onClick={() => setShowDeleteModal(true)}
+                className="mt-1 px-4 py-2 rounded-lg bg-white border border-red-300 text-crimson hover:bg-crimson hover:text-white font-sans text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer self-start"
+              >
+                Delete Brand Workspace
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Delete Workspace Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#070C1E]/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md bg-white rounded-xl border border-[#E5DDCB] p-6 shadow-2xl flex flex-col gap-4 text-[#18181B]">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-red-100 text-crimson flex items-center justify-center">
+                <span className="material-symbols-outlined text-[24px]">warning</span>
+              </div>
+              <div>
+                <h3 className="font-editorial text-[18px] font-bold text-[#0B132B]">
+                  Delete Brand Workspace?
+                </h3>
+                <p className="text-xs text-slate-500 font-sans">
+                  This action is permanent and cannot be undone.
+                </p>
+              </div>
+            </div>
+
+            <p className="text-xs text-[#0B132B] font-sans leading-relaxed">
+              All rules, guidelines, review history, and audit ledger entries for <strong className="font-bold">{brand.name}</strong> will be permanently removed.
+            </p>
+
+            <div className="flex items-center justify-end gap-3 pt-2 border-t border-[#ECE7DD]">
+              <button
+                type="button"
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-[#F6F3EC] font-sans text-[13px] font-semibold transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={handleDeleteBrand}
+                className="px-4 py-2 rounded-lg bg-crimson hover:bg-crimson-deep text-white font-sans text-[13px] font-bold tracking-wide uppercase transition-all shadow-md active:scale-95 disabled:opacity-50 cursor-pointer flex items-center gap-2"
+              >
+                {isDeleting && <span className="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>}
+                <span>Confirm Delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

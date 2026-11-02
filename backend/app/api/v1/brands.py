@@ -99,3 +99,20 @@ def update_brand(
     )
 
     return brand
+
+
+@router.delete("/{brand_id}")
+def delete_brand(
+    brand_id: str,
+    db: Session = Depends(get_db),
+):
+    brand = db.query(Brand).filter((Brand.id == brand_id) | (Brand.slug == brand_id)).first()
+    if not brand:
+        raise HTTPException(status_code=404, detail="Brand not found")
+
+    deleted_id = brand.id
+    deleted_name = brand.name
+    db.delete(brand)
+    db.commit()
+
+    return {"status": "deleted", "id": deleted_id, "name": deleted_name}

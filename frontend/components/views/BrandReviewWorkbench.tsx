@@ -9,12 +9,16 @@ interface BrandReviewWorkbenchProps {
   brand: Brand | null;
   demoFixture: DemoFixture | null;
   onNavigateToKnowledge: () => void;
+  initialReview?: Review | null;
+  onClearLoadedReview?: () => void;
 }
 
 export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
   brand,
   demoFixture,
   onNavigateToKnowledge,
+  initialReview,
+  onClearLoadedReview,
 }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -22,6 +26,7 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
   const [currentReview, setCurrentReview] = useState<Review | null>(null);
   const [activeFilter, setActiveFilter] = useState<'all' | 'critical' | 'warning' | 'terminology'>('all');
   const [errorBanner, setErrorBanner] = useState<string | null>(null);
+  const [appliedSuggestionIds, setAppliedSuggestionIds] = useState<Set<string>>(new Set());
 
   // Human Governance Decision states
   const [decisionVerdict, setDecisionVerdict] = useState<'approved' | 'needs_changes' | 'rejected'>('needs_changes');
@@ -35,13 +40,46 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
   // Telemetry counts
   const [knowledgeCount, setKnowledgeCount] = useState<number>(0);
 
+  // Reset state on brand switch to preserve brand isolation
   useEffect(() => {
     if (brand) {
       api.getKnowledge(brand.id).then((items) => {
         setKnowledgeCount(items.length);
       }).catch(() => {});
+
+      setCurrentReview(null);
+      setVersionHistory([]);
+      setErrorBanner(null);
+      setDecisionSuccess(null);
+      setAppliedSuggestionIds(new Set());
+      setTitle('');
+      setContent('');
     }
-  }, [brand]);
+  }, [brand?.id]);
+
+  // Handle loading historical review snapshot
+  useEffect(() => {
+    if (initialReview) {
+      setCurrentReview(initialReview);
+      setTitle(initialReview.title || '');
+      setContent(initialReview.content || '');
+      setErrorBanner(null);
+      setDecisionSuccess(null);
+      setAppliedSuggestionIds(new Set());
+      if (initialReview.latest_decision) {
+        setDecisionVerdict(initialReview.latest_decision.decision as any);
+        setReviewerNote(initialReview.latest_decision.note || '');
+      }
+      if (initialReview.review_group_id) {
+        api.getReviewGroupHistory(initialReview.review_group_id).then((hist) => {
+          setVersionHistory(hist.history);
+        }).catch(() => {});
+      }
+      if (onClearLoadedReview) {
+        onClearLoadedReview();
+      }
+    }
+  }, [initialReview]);
 
   // Load sample draft from backend fixture
   const handleLoadSampleDraft = () => {
@@ -49,11 +87,14 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
       setTitle(demoFixture.sample_draft.title);
       setContent(demoFixture.sample_draft.content);
       setErrorBanner(null);
+      setAppliedSuggestionIds(new Set());
     }
   };
 
   // Run Content Check
   const handleCheckContent = async () => {
+    if (isSubmitting) return;
+
     if (!brand) {
       setErrorBanner('Please select or create a brand workspace first.');
       return;
@@ -73,15 +114,16 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
           brand_id: brand.id,
           review_group_id: currentReview?.review_group_id || null,
           title: title.trim() || 'Untitled Draft',
-          content: content,
+          content: content.trim(),
           run_ai: true,
         }),
         new Promise((resolve) => setTimeout(resolve, 1800)),
       ]);
 
       setCurrentReview(review);
+      setAppliedSuggestionIds(new Set());
       if (review.latest_decision) {
-        setDecisionVerdict(review.latest_decision.decision);
+        setDecisionVerdict(review.latest_decision.decision as any);
         setReviewerNote(review.latest_decision.note || '');
       }
 
@@ -98,19 +140,20 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
   };
 
   // Apply suggestion directly to draft content
-  const handleApplySuggestion = (targetExcerpt: string | null | undefined, suggestedRewrite: string | null | undefined) => {
-    if (!suggestedRewrite) return;
-    
-    // If target excerpt matches, replace it; otherwise apply the suggested rewrite
-    if (targetExcerpt && content.includes(targetExcerpt)) {
-      setContent((prev) => prev.replace(targetExcerpt, suggestedRewrite));
-    } else {
-      setContent(suggestedRewrite);
-    }
+  const handleApplySuggestion = (
+    findingId: string,
+    targetExcerpt: string | null | undefined,
+    suggestedRewrite: string | null | undefined
+  ) => {
+    if (!suggestedRewrite || appliedSuggestionIds.has(findingId)) return;
+    setContent(suggestedRewrite);
+    setAppliedSuggestionIds((prev) => new Set(prev).add(findingId));
   };
 
   // Record Human Decision
   const handleRecordDecision = async () => {
+    if (isRecordingDecision) return;
+
     if (!currentReview) {
       setErrorBanner('Submit a review before recording a human decision.');
       return;
@@ -636,11 +679,18 @@ export const BrandReviewWorkbench: React.FC<BrandReviewWorkbenchProps> = ({
                         </span>
                         <button
                           type="button"
-                          onClick={() => handleApplySuggestion(finding.content_excerpt, finding.suggested_rewrite)}
-                          className="inline-flex items-center gap-1 px-3 py-1 rounded bg-[#0B132B] hover:bg-[#141D3B] text-white text-xs font-semibold transition-all shadow-xs cursor-pointer"
+                          disabled={appliedSuggestionIds.has(finding.id)}
+                          onClick={() => handleApplySuggestion(finding.id, finding.content_excerpt, finding.suggested_rewrite)}
+                          className={`inline-flex items-center gap-1 px-3 py-1 rounded text-xs font-semibold transition-all shadow-xs ${
+                            appliedSuggestionIds.has(finding.id)
+                              ? 'bg-emerald-100 text-emerald-800 cursor-default'
+                              : 'bg-[#0B132B] hover:bg-[#141D3B] text-white cursor-pointer active:scale-95'
+                          }`}
                         >
-                          <span className="material-symbols-outlined text-[14px]">auto_fix_high</span>
-                          <span>Apply suggestion</span>
+                          <span className="material-symbols-outlined text-[14px]">
+                            {appliedSuggestionIds.has(finding.id) ? 'check' : 'auto_fix_high'}
+                          </span>
+                          <span>{appliedSuggestionIds.has(finding.id) ? 'Applied' : 'Apply suggestion'}</span>
                         </button>
                       </div>
                       <p className="text-xs text-[#18181B] font-sans">

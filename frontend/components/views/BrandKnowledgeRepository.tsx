@@ -14,6 +14,8 @@ export const BrandKnowledgeRepository: React.FC<BrandKnowledgeRepositoryProps> =
   const [selectedKind, setSelectedKind] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<KnowledgeItem | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Form states
   const [newKind, setNewKind] = useState('prohibited_term');
@@ -54,13 +56,17 @@ export const BrandKnowledgeRepository: React.FC<BrandKnowledgeRepositoryProps> =
     }
   };
 
-  const handleDeleteItem = async (itemId: string) => {
-    if (!brand) return;
+  const handleConfirmDelete = async () => {
+    if (!brand || !itemToDelete || isDeleting) return;
     try {
-      await api.deleteKnowledgeItem(brand.id, itemId, true);
-      setItems((prev) => prev.filter((it) => it.id !== itemId));
+      setIsDeleting(true);
+      await api.deleteKnowledgeItem(brand.id, itemToDelete.id, true);
+      setItems((prev) => prev.filter((it) => it.id !== itemToDelete.id));
+      setItemToDelete(null);
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -296,7 +302,7 @@ export const BrandKnowledgeRepository: React.FC<BrandKnowledgeRepositoryProps> =
                 <span className="truncate max-w-[180px]">Ref: {item.source_label}</span>
                 <button
                   type="button"
-                  onClick={() => handleDeleteItem(item.id)}
+                  onClick={() => setItemToDelete(item)}
                   className="text-slate-400 hover:text-crimson transition-colors p-1 rounded cursor-pointer"
                   title="Delete knowledge item"
                 >
@@ -452,6 +458,50 @@ export const BrandKnowledgeRepository: React.FC<BrandKnowledgeRepositoryProps> =
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {itemToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#070C1E]/60 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md bg-white rounded-xl border border-[#E5DDCB] p-6 shadow-2xl flex flex-col gap-4 text-[#18181B]">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-red-100 text-crimson flex items-center justify-center">
+                <span className="material-symbols-outlined text-[24px]">warning</span>
+              </div>
+              <div>
+                <h3 className="font-editorial text-[18px] font-bold text-[#0B132B]">
+                  Permanently Delete Rule?
+                </h3>
+                <p className="text-xs text-slate-500 font-sans">
+                  This action removes this rule permanently from compliance checks.
+                </p>
+              </div>
+            </div>
+
+            <div className="p-3 rounded-lg bg-[#FAF8F2] border border-[#E5DDCB] text-xs text-[#0B132B] font-serif italic">
+              &quot;{itemToDelete.title}&quot; ({itemToDelete.kind.replace('_', ' ')})
+            </div>
+
+            <div className="flex items-center justify-end gap-3 pt-2 border-t border-[#ECE7DD]">
+              <button
+                type="button"
+                onClick={() => setItemToDelete(null)}
+                className="px-4 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-[#F6F3EC] font-sans text-[13px] font-semibold transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={handleConfirmDelete}
+                className="px-4 py-2 rounded-lg bg-crimson hover:bg-crimson-deep text-white font-sans text-[13px] font-bold tracking-wide uppercase transition-all shadow-md active:scale-95 disabled:opacity-50 cursor-pointer flex items-center gap-2"
+              >
+                {isDeleting && <span className="material-symbols-outlined text-[16px] animate-spin">progress_activity</span>}
+                <span>Delete Permanently</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

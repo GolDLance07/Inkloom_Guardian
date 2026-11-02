@@ -27,6 +27,20 @@ class ApiError extends Error {
   }
 }
 
+function formatErrorDetail(detail: any): string {
+  if (typeof detail === 'string') return detail;
+  if (Array.isArray(detail)) {
+    return detail
+      .map((d) => {
+        const field = Array.isArray(d.loc) ? d.loc[d.loc.length - 1] : '';
+        return field ? `${field}: ${d.msg}` : d.msg;
+      })
+      .filter(Boolean)
+      .join('; ');
+  }
+  return JSON.stringify(detail);
+}
+
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const url = `${API_BASE}${endpoint}`;
   const headers = {
@@ -34,11 +48,17 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
     ...(options.headers || {}),
   };
 
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 35000);
+
   try {
     const response = await fetch(url, {
       ...options,
       headers,
+      signal: options.signal || controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       let errorMsg = `Request failed with status ${response.status}`;
@@ -49,7 +69,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
           errorMsg = errorJson.error.message || errorMsg;
           errorCode = errorJson.error.code || errorCode;
         } else if (errorJson.detail) {
-          errorMsg = typeof errorJson.detail === 'string' ? errorJson.detail : JSON.stringify(errorJson.detail);
+          errorMsg = formatErrorDetail(errorJson.detail);
         }
       } catch {
         // use default
@@ -59,7 +79,11 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 
     return await response.json() as T;
   } catch (err: any) {
+    clearTimeout(timeoutId);
     if (err instanceof ApiError) throw err;
+    if (err.name === 'AbortError') {
+      throw new ApiError('Request timed out. The server took too long to respond.', 408, 'TIMEOUT');
+    }
     throw new ApiError(err.message || 'Network connection failed', 0, 'NETWORK_ERROR');
   }
 }
@@ -90,6 +114,12 @@ export const api = {
     return request<Brand>(`/api/v1/brands/${brandId}`, {
       method: 'PATCH',
       body: JSON.stringify(payload),
+    });
+  },
+
+  async deleteBrand(brandId: string): Promise<{ status: string; id: string; name: string }> {
+    return request<{ status: string; id: string; name: string }>(`/api/v1/brands/${brandId}`, {
+      method: 'DELETE',
     });
   },
 
@@ -174,24 +204,39 @@ export const api = {
     formData.append('file', file);
 
     const url = `${API_BASE}/api/v1/brands/${brandId}/assets/inspect-image`;
-    const response = await fetch(url, {
-      method: 'POST',
-      body: formData,
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 45000);
 
-    if (!response.ok) {
-      let errorMsg = `Upload failed with status ${response.status}`;
-      try {
-        const errorJson = await response.json();
-        if (errorJson.detail) {
-          errorMsg = typeof errorJson.detail === 'string' ? errorJson.detail : JSON.stringify(errorJson.detail);
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        let errorMsg = `Upload failed with status ${response.status}`;
+        try {
+          const errorJson = await response.json();
+          if (errorJson.detail) {
+            errorMsg = formatErrorDetail(errorJson.detail);
+          }
+        } catch {
+          // default
         }
-      } catch {
-        // default
+        throw new ApiError(errorMsg, response.status);
       }
-      throw new ApiError(errorMsg, response.status);
-    }
 
-    return (await response.json()) as AssetInspectionResult;
+      return (await response.json()) as AssetInspectionResult;
+    } catch (err: any) {
+      clearTimeout(timeoutId);
+      if (err instanceof ApiError) throw err;
+      if (err.name === 'AbortError') {
+        throw new ApiError('Image upload and OCR processing timed out. Please try again.', 408, 'TIMEOUT');
+      }
+      throw new ApiError(err.message || 'Image upload failed', 0, 'UPLOAD_ERROR');
+    }
   },
 };

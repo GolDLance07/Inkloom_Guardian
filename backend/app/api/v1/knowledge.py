@@ -61,12 +61,6 @@ def create_knowledge_item(
     except Exception:
         pass
 
-    try:
-        generate_and_store_embedding(db, item)
-        db.commit()
-    except Exception:
-        pass
-
     record_audit_event(
         db=db,
         brand_id=brand.id,

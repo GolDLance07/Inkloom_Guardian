@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field, ConfigDict, AliasChoices
-from typing import Optional, List, Dict, Any
+import re
+from pydantic import BaseModel, Field, ConfigDict, AliasChoices, field_validator
+from typing import Optional, List, Dict, Any, ClassVar, Set
 from datetime import datetime
 
 
@@ -17,6 +18,14 @@ class BrandBase(BaseModel):
     logo_url: Optional[str] = None
     visual_config: Dict[str, Any] = Field(default_factory=dict)
 
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        s = v.strip()
+        if not s:
+            raise ValueError("Brand name cannot be empty or whitespace only.")
+        return s
+
 
 class BrandCreate(BrandBase):
     slug: Optional[str] = None
@@ -28,6 +37,16 @@ class BrandUpdate(BaseModel):
     industry: Optional[str] = None
     logo_url: Optional[str] = None
     visual_config: Optional[Dict[str, Any]] = None
+
+    @field_validator("name")
+    @classmethod
+    def validate_update_name(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None:
+            s = v.strip()
+            if not s:
+                raise ValueError("Brand name cannot be empty or whitespace only.")
+            return s
+        return v
 
 
 class BrandResponse(BrandBase):
@@ -50,6 +69,53 @@ class KnowledgeItemBase(BaseModel):
     rule_config: Dict[str, Any] = Field(default_factory=dict)
     metadata: Dict[str, Any] = Field(default_factory=dict, validation_alias=AliasChoices("metadata", "extra_metadata"))
 
+    ALLOWED_KINDS: ClassVar[Set[str]] = {
+        "guideline",
+        "fact",
+        "claim",
+        "preferred_term",
+        "prohibited_term",
+        "required_phrase",
+        "disclaimer",
+        "asset_reference",
+    }
+
+    @field_validator("kind")
+    @classmethod
+    def validate_kind(cls, v: str) -> str:
+        v_clean = v.strip().lower()
+        if v_clean not in cls.ALLOWED_KINDS:
+            raise ValueError(
+                f"Invalid kind '{v}'. Allowed kinds: {', '.join(sorted(cls.ALLOWED_KINDS))}"
+            )
+        return v_clean
+
+    @field_validator("title", "content", "source_label")
+    @classmethod
+    def validate_non_empty(cls, v: str) -> str:
+        s = v.strip()
+        if not s:
+            raise ValueError("Field cannot be empty or whitespace only.")
+        return s
+
+    @field_validator("rule_config")
+    @classmethod
+    def validate_rule_config(cls, v: Dict[str, Any]) -> Dict[str, Any]:
+        if not isinstance(v, dict):
+            return {}
+        patterns = v.get("conflict_patterns")
+        if patterns:
+            if not isinstance(patterns, list):
+                raise ValueError("conflict_patterns must be a list of regex pattern strings.")
+            for p in patterns:
+                if not isinstance(p, str):
+                    raise ValueError(f"Pattern '{p}' must be a string.")
+                try:
+                    re.compile(p)
+                except re.error as e:
+                    raise ValueError(f"Invalid regex pattern '{p}': {e}")
+        return v
+
 
 class KnowledgeItemCreate(KnowledgeItemBase):
     pass
@@ -63,6 +129,33 @@ class KnowledgeItemUpdate(BaseModel):
     active: Optional[bool] = None
     rule_config: Optional[Dict[str, Any]] = None
     metadata: Optional[Dict[str, Any]] = None
+
+    @field_validator("title", "content", "source_label")
+    @classmethod
+    def validate_update_non_empty(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None:
+            s = v.strip()
+            if not s:
+                raise ValueError("Field cannot be empty or whitespace only.")
+            return s
+        return v
+
+    @field_validator("rule_config")
+    @classmethod
+    def validate_update_rule_config(cls, v: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+        if v is not None and isinstance(v, dict):
+            patterns = v.get("conflict_patterns")
+            if patterns:
+                if not isinstance(patterns, list):
+                    raise ValueError("conflict_patterns must be a list of regex pattern strings.")
+                for p in patterns:
+                    if not isinstance(p, str):
+                        raise ValueError(f"Pattern '{p}' must be a string.")
+                    try:
+                        re.compile(p)
+                    except re.error as e:
+                        raise ValueError(f"Invalid regex pattern '{p}': {e}")
+        return v
 
 
 class KnowledgeItemResponse(KnowledgeItemBase):
@@ -101,6 +194,20 @@ class DecisionCreate(BaseModel):
     reviewer_label: str = Field(default="Demo reviewer", max_length=100)
     note: Optional[str] = None
 
+    @field_validator("decision")
+    @classmethod
+    def validate_decision(cls, v: str) -> str:
+        d = v.strip().lower()
+        if d not in {"approved", "needs_changes", "rejected"}:
+            raise ValueError("Decision must be one of: 'approved', 'needs_changes', 'rejected'.")
+        return d
+
+    @field_validator("reviewer_label")
+    @classmethod
+    def validate_reviewer_label(cls, v: str) -> str:
+        s = v.strip()
+        return s if s else "Demo reviewer"
+
 
 class DecisionResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -120,6 +227,30 @@ class ReviewCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=255)
     content: str = Field(..., min_length=1)
     run_ai: bool = True
+
+    @field_validator("brand_id")
+    @classmethod
+    def validate_brand_id(cls, v: str) -> str:
+        s = v.strip()
+        if not s:
+            raise ValueError("brand_id cannot be empty or whitespace only.")
+        return s
+
+    @field_validator("title")
+    @classmethod
+    def validate_title(cls, v: str) -> str:
+        s = v.strip()
+        if not s:
+            raise ValueError("Review title cannot be empty or whitespace only.")
+        return s
+
+    @field_validator("content")
+    @classmethod
+    def validate_content(cls, v: str) -> str:
+        s = v.strip()
+        if not s:
+            raise ValueError("Review content cannot be empty or whitespace only.")
+        return s
 
 
 class FindingsSummary(BaseModel):

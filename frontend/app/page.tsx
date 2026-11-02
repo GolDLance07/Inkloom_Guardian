@@ -17,19 +17,44 @@ import { LoginScreen } from '@/components/LoginScreen';
 export default function Home() {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [selectedBrand, setSelectedBrand] = useState<Brand | null>(null);
-  const [activeTab, setActiveTab] = useState<'review' | 'knowledge' | 'assets' | 'history' | 'settings'>('review');
+  const [activeTab, setActiveTabState] = useState<'review' | 'knowledge' | 'assets' | 'history' | 'settings'>('review');
   const [health, setHealth] = useState<HealthStatus | null>(null);
   const [demoFixture, setDemoFixture] = useState<DemoFixture | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [showBootScreen, setShowBootScreen] = useState(true);
   const [currentUser, setCurrentUser] = useState<{ name: string; email: string; role: string } | null>(null);
+  const [loadedReview, setLoadedReview] = useState<Review | null>(null);
+
+  const setActiveTab = (tab: 'review' | 'knowledge' | 'assets' | 'history' | 'settings') => {
+    setActiveTabState(tab);
+    try {
+      localStorage.setItem('inkloom_active_tab', tab);
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleSelectBrand = (b: Brand | null) => {
+    setSelectedBrand(b);
+    if (b) {
+      try {
+        localStorage.setItem('inkloom_selected_brand_id', b.id);
+      } catch {
+        // ignore
+      }
+    }
+  };
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem('inkloom_user_session');
       if (saved) {
         setCurrentUser(JSON.parse(saved));
+      }
+      const savedTab = localStorage.getItem('inkloom_active_tab');
+      if (savedTab && ['review', 'knowledge', 'assets', 'history', 'settings'].includes(savedTab)) {
+        setActiveTabState(savedTab as any);
       }
     } catch {
       // ignore
@@ -66,8 +91,18 @@ export default function Home() {
     try {
       const bList = await api.getBrands(true);
       setBrands(bList);
-      if (bList.length > 0 && !selectedBrand) {
-        setSelectedBrand(bList[0]);
+      if (bList.length > 0) {
+        let initial = bList[0];
+        try {
+          const savedBrandId = localStorage.getItem('inkloom_selected_brand_id');
+          if (savedBrandId) {
+            const found = bList.find((b) => b.id === savedBrandId || b.slug === savedBrandId);
+            if (found) initial = found;
+          }
+        } catch {
+          // ignore
+        }
+        setSelectedBrand((curr) => curr || initial);
       }
     } catch (err) {
       console.error('Failed to load brands:', err);
@@ -98,15 +133,25 @@ export default function Home() {
 
   const handleBrandCreated = (newBrand: Brand) => {
     setBrands((prev) => [newBrand, ...prev]);
-    setSelectedBrand(newBrand);
+    handleSelectBrand(newBrand);
   };
 
   const handleBrandUpdated = (updatedBrand: Brand) => {
     setBrands((prev) => prev.map((b) => (b.id === updatedBrand.id ? updatedBrand : b)));
-    setSelectedBrand(updatedBrand);
+    handleSelectBrand(updatedBrand);
+  };
+
+  const handleBrandDeleted = (deletedBrandId: string) => {
+    setBrands((prev) => {
+      const filtered = prev.filter((b) => b.id !== deletedBrandId);
+      const nextBrand = filtered.length > 0 ? filtered[0] : null;
+      handleSelectBrand(nextBrand);
+      return filtered;
+    });
   };
 
   const handleSelectReviewFromHistory = (review: Review) => {
+    setLoadedReview(review);
     setActiveTab('review');
   };
 
@@ -126,7 +171,7 @@ export default function Home() {
           <AppSidebar
             brands={brands}
             selectedBrand={selectedBrand}
-            onSelectBrand={(b) => setSelectedBrand(b)}
+            onSelectBrand={handleSelectBrand}
             activeTab={activeTab}
             setActiveTab={setActiveTab}
             onOpenCreateBrand={() => setIsCreateModalOpen(true)}
@@ -160,6 +205,8 @@ export default function Home() {
                     brand={selectedBrand}
                     demoFixture={demoFixture}
                     onNavigateToKnowledge={() => setActiveTab('knowledge')}
+                    initialReview={loadedReview}
+                    onClearLoadedReview={() => setLoadedReview(null)}
                   />
                 )}
 
@@ -178,6 +225,7 @@ export default function Home() {
                   <ReviewHistoryView
                     brand={selectedBrand}
                     onSelectReview={handleSelectReviewFromHistory}
+                    onNavigateToWorkbench={() => setActiveTab('review')}
                   />
                 )}
 
@@ -185,6 +233,7 @@ export default function Home() {
                   <BrandSettingsView
                     brand={selectedBrand}
                     onBrandUpdated={handleBrandUpdated}
+                    onBrandDeleted={handleBrandDeleted}
                   />
                 )}
               </>

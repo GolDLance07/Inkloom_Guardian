@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.db import get_db
@@ -24,6 +25,23 @@ def record_decision(
             status_code=400,
             detail=f"Invalid decision '{payload.decision}'. Must be one of: {', '.join(valid_decisions)}",
         )
+
+    # Idempotency guard against rapid duplicate clicks (within 10 seconds)
+    latest_existing = (
+        db.query(Decision)
+        .filter(Decision.review_id == review.id)
+        .order_by(Decision.created_at.desc())
+        .first()
+    )
+    if (
+        latest_existing
+        and latest_existing.decision == payload.decision
+        and (latest_existing.note or "") == (payload.note or "")
+    ):
+        now_utc = datetime.now(timezone.utc)
+        created_utc = latest_existing.created_at if latest_existing.created_at.tzinfo else latest_existing.created_at.replace(tzinfo=timezone.utc)
+        if abs((now_utc - created_utc).total_seconds()) < 10:
+            return latest_existing
 
     decision = Decision(
         review_id=review.id,

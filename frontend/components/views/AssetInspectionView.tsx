@@ -20,6 +20,20 @@ export const AssetInspectionView: React.FC<AssetInspectionViewProps> = ({
   const [errorBanner, setErrorBanner] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const handleClear = () => {
+    setSelectedFile(null);
+    setImagePreviewUrl(null);
+    setResult(null);
+    setErrorBanner(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  React.useEffect(() => {
+    handleClear();
+  }, [brand?.id]);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -90,16 +104,6 @@ export const AssetInspectionView: React.FC<AssetInspectionViewProps> = ({
       setErrorBanner(err.message || 'Asset inspection failed.');
     } finally {
       setIsInspecting(false);
-    }
-  };
-
-  const handleClear = () => {
-    setSelectedFile(null);
-    setImagePreviewUrl(null);
-    setResult(null);
-    setErrorBanner(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
     }
   };
 

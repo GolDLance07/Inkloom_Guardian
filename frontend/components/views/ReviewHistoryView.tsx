@@ -7,9 +7,14 @@ import { api } from '@/lib/api';
 interface ReviewHistoryViewProps {
   brand: Brand | null;
   onSelectReview: (review: Review) => void;
+  onNavigateToWorkbench?: () => void;
 }
 
-export const ReviewHistoryView: React.FC<ReviewHistoryViewProps> = ({ brand, onSelectReview }) => {
+export const ReviewHistoryView: React.FC<ReviewHistoryViewProps> = ({
+  brand,
+  onSelectReview,
+  onNavigateToWorkbench,
+}) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -87,6 +92,16 @@ export const ReviewHistoryView: React.FC<ReviewHistoryViewProps> = ({ brand, onS
           <p className="text-xs text-[#64748B] max-w-md">
             Reviews conducted in the workbench will appear here with complete snapshot history and human decision records.
           </p>
+          {onNavigateToWorkbench && (
+            <button
+              type="button"
+              onClick={onNavigateToWorkbench}
+              className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0B132B] hover:bg-[#141D3B] text-white text-xs font-semibold uppercase tracking-wider transition-all cursor-pointer shadow-sm"
+            >
+              <span className="material-symbols-outlined text-[16px]">draw</span>
+              <span>Open Review Workbench</span>
+            </button>
+          )}
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-[#E5DDCB] sumi-card-shadow overflow-hidden">
