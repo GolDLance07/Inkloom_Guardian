@@ -7,12 +7,16 @@ interface AppHeaderProps {
   health: HealthStatus | null;
   selectedBrand: Brand | null;
   onOpenCreateBrand: () => void;
+  currentUser?: { name: string; email: string; role: string } | null;
+  onSignOut?: () => void;
 }
 
 export const AppHeader: React.FC<AppHeaderProps> = ({
   health,
   selectedBrand,
   onOpenCreateBrand,
+  currentUser,
+  onSignOut,
 }) => {
   const isApiConnected = health?.status === 'healthy';
   const isAiActive = health?.ai_enabled;
@@ -60,19 +64,32 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
 
         <div className="h-4 w-px bg-[#E2D9C8]" />
 
-        {/* Reviewer Profile Avatar */}
-        <div className="flex items-center gap-2.5" title="Credentialed Reviewer">
-          <div className="w-8 h-8 rounded-full bg-[#0B132B] text-white font-serif text-xs font-bold flex items-center justify-center shadow-xs">
-            AG
+        {/* Reviewer Profile Avatar & Sign Out */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5" title={currentUser?.email || "Credentialed Reviewer"}>
+            <div className="w-8 h-8 rounded-full bg-[#0B132B] text-white font-serif text-xs font-bold flex items-center justify-center shadow-xs">
+              {currentUser?.name ? currentUser.name.slice(0, 2).toUpperCase() : 'AG'}
+            </div>
+            <div className="hidden md:flex flex-col text-left">
+              <span className="text-xs font-semibold text-[#0B132B] leading-none">
+                {currentUser?.name || 'Admin Guardian'}
+              </span>
+              <span className="text-[10px] text-[#64748B] font-mono uppercase tracking-wider mt-0.5">
+                {currentUser?.role || 'SecOps Level 3'}
+              </span>
+            </div>
           </div>
-          <div className="hidden md:flex flex-col text-left">
-            <span className="text-xs font-semibold text-[#0B132B] leading-none">
-              Admin Guardian
-            </span>
-            <span className="text-[10px] text-[#64748B] font-mono uppercase tracking-wider mt-0.5">
-              SecOps Level 3
-            </span>
-          </div>
+
+          {onSignOut && (
+            <button
+              type="button"
+              onClick={onSignOut}
+              title="Sign Out"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-crimson hover:bg-red-50 transition-colors cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-[18px]">logout</span>
+            </button>
+          )}
         </div>
       </div>
     </header>

@@ -12,6 +12,7 @@ import { AssetInspectionView } from '@/components/views/AssetInspectionView';
 import { ReviewHistoryView } from '@/components/views/ReviewHistoryView';
 import { BrandSettingsView } from '@/components/views/BrandSettingsView';
 import { InitialLoadingScreen } from '@/components/InitialLoadingScreen';
+import { LoginScreen } from '@/components/LoginScreen';
 
 export default function Home() {
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -22,6 +23,36 @@ export default function Home() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [showBootScreen, setShowBootScreen] = useState(true);
+  const [currentUser, setCurrentUser] = useState<{ name: string; email: string; role: string } | null>(null);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('inkloom_user_session');
+      if (saved) {
+        setCurrentUser(JSON.parse(saved));
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const handleLoginSuccess = (user: { name: string; email: string; role: string }) => {
+    setCurrentUser(user);
+    try {
+      localStorage.setItem('inkloom_user_session', JSON.stringify(user));
+    } catch {
+      // ignore
+    }
+  };
+
+  const handleSignOut = () => {
+    setCurrentUser(null);
+    try {
+      localStorage.removeItem('inkloom_user_session');
+    } catch {
+      // ignore
+    }
+  };
 
   // Poll health & fetch initial brands
   const refreshSystemData = async () => {
@@ -87,82 +118,88 @@ export default function Home() {
         />
       )}
 
-      <div className="min-h-screen bg-[#FDFBF7] text-[#18181B] flex">
-        {/* Sidebar matching Stitch */}
-        <AppSidebar
-          brands={brands}
-          selectedBrand={selectedBrand}
-          onSelectBrand={(b) => setSelectedBrand(b)}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-          onOpenCreateBrand={() => setIsCreateModalOpen(true)}
-          engineActive={health?.status === 'healthy'}
-        />
-
-        {/* Main Body Canvas */}
-        <div className="pl-64 flex flex-col flex-1 min-h-screen">
-          {/* Top Header */}
-          <AppHeader
-            health={health}
+      {!currentUser ? (
+        <LoginScreen onLoginSuccess={handleLoginSuccess} />
+      ) : (
+        <div className="min-h-screen bg-[#FDFBF7] text-[#18181B] flex">
+          {/* Sidebar matching Stitch */}
+          <AppSidebar
+            brands={brands}
             selectedBrand={selectedBrand}
+            onSelectBrand={(b) => setSelectedBrand(b)}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
             onOpenCreateBrand={() => setIsCreateModalOpen(true)}
+            engineActive={health?.status === 'healthy'}
           />
 
-          {/* Dynamic Views */}
-          <main className="w-full pt-16 flex-1 flex flex-col">
-            {initialLoading ? (
-              <div className="flex flex-col items-center justify-center min-h-[70vh] gap-3 text-slate-500">
-                <span className="material-symbols-outlined text-[32px] text-crimson animate-spin">
-                  progress_activity
-                </span>
-                <span className="font-sans text-[14px] font-medium text-slate-600">Connecting to Inkloom Governance Engine...</span>
-              </div>
-            ) : (
-            <>
-              {activeTab === 'review' && (
-                <BrandReviewWorkbench
-                  brand={selectedBrand}
-                  demoFixture={demoFixture}
-                  onNavigateToKnowledge={() => setActiveTab('knowledge')}
-                />
-              )}
+          {/* Main Body Canvas */}
+          <div className="pl-64 flex flex-col flex-1 min-h-screen">
+            {/* Top Header */}
+            <AppHeader
+              health={health}
+              selectedBrand={selectedBrand}
+              onOpenCreateBrand={() => setIsCreateModalOpen(true)}
+              currentUser={currentUser}
+              onSignOut={handleSignOut}
+            />
 
-              {activeTab === 'knowledge' && (
-                <BrandKnowledgeRepository brand={selectedBrand} />
-              )}
+            {/* Dynamic Views */}
+            <main className="w-full pt-16 flex-1 flex flex-col">
+              {initialLoading ? (
+                <div className="flex flex-col items-center justify-center min-h-[70vh] gap-3 text-slate-500">
+                  <span className="material-symbols-outlined text-[32px] text-crimson animate-spin">
+                    progress_activity
+                  </span>
+                  <span className="font-sans text-[14px] font-medium text-slate-600">Connecting to Inkloom Governance Engine...</span>
+                </div>
+              ) : (
+              <>
+                {activeTab === 'review' && (
+                  <BrandReviewWorkbench
+                    brand={selectedBrand}
+                    demoFixture={demoFixture}
+                    onNavigateToKnowledge={() => setActiveTab('knowledge')}
+                  />
+                )}
 
-              {activeTab === 'assets' && (
-                <AssetInspectionView
-                  brand={selectedBrand}
-                  onNavigateToKnowledge={() => setActiveTab('knowledge')}
-                />
-              )}
+                {activeTab === 'knowledge' && (
+                  <BrandKnowledgeRepository brand={selectedBrand} />
+                )}
 
-              {activeTab === 'history' && (
-                <ReviewHistoryView
-                  brand={selectedBrand}
-                  onSelectReview={handleSelectReviewFromHistory}
-                />
-              )}
+                {activeTab === 'assets' && (
+                  <AssetInspectionView
+                    brand={selectedBrand}
+                    onNavigateToKnowledge={() => setActiveTab('knowledge')}
+                  />
+                )}
 
-              {activeTab === 'settings' && (
-                <BrandSettingsView
-                  brand={selectedBrand}
-                  onBrandUpdated={handleBrandUpdated}
-                />
-              )}
-            </>
-          )}
-        </main>
-      </div>
+                {activeTab === 'history' && (
+                  <ReviewHistoryView
+                    brand={selectedBrand}
+                    onSelectReview={handleSelectReviewFromHistory}
+                  />
+                )}
 
-      {/* Create Brand Modal */}
-      <CreateBrandModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onBrandCreated={handleBrandCreated}
-      />
-      </div>
+                {activeTab === 'settings' && (
+                  <BrandSettingsView
+                    brand={selectedBrand}
+                    onBrandUpdated={handleBrandUpdated}
+                  />
+                )}
+              </>
+            )}
+          </main>
+        </div>
+
+        {/* Create Brand Modal */}
+        <CreateBrandModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onBrandCreated={handleBrandCreated}
+        />
+        </div>
+      )}
     </>
   );
 }
