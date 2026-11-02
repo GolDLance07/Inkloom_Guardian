@@ -52,8 +52,10 @@ Features are categorized by their implementation and verification status:
 | **Audit Event Logging** | Implemented | Relational `audit_events` table tracking brand creation, knowledge modifications, review runs, and human decisions. |
 | **Audit Telemetry Export** | Implemented | Export brand review history and findings to structured JSON directly from the UI. |
 | **Demo Fixture Seeding** | Implemented | Configurable backend seeder (`demo_brand.json`) and "Load sample draft" workbench action. |
-| **Role-Based Access Control (RBAC)** | Planned | Fine-grained multi-user authentication and permission gates (currently single-tenant reviewer label string). |
-| **Vector Search / Embeddings (RAG)** | Planned | Vector retrieval for enterprise catalogs with >10,000 concurrent rules. |
+| **Vector Search / Embeddings (RAG)** | Implemented | Bounded semantic context retrieval for LLM review using PostgreSQL `pgvector` (`Vector(768)`), Gemini `text-embedding-004`, and lexical fallback. |
+| **Multi-Modal Asset Checking** | Implemented | Upload and inspect visual marketing images (PNG, JPEG, WebP) via OCR text extraction evaluated against active brand rules. |
+| **Automated Rule Regression Suite** | Implemented | Standalone zero-network CLI runner and pytest suite driven by synthetic version-controlled fixtures covering 9 rule scenarios. |
+| **Role-Based Access Control (RBAC)** | Planned | Fine-grained enterprise multi-user authentication and permission gates (OAuth2 / OIDC). |
 
 ---
 
@@ -66,37 +68,41 @@ The review pipeline processes content through a strict sequence:
    │
    ▼
 2. Brand Context Resolution
-   └── Loads active KnowledgeItem records strictly scoped to the selected brand_id
+   └── Loads all active KnowledgeItem records strictly scoped to the selected brand_id
    │
    ▼
-3. Deterministic Rule Checks (Executed first, zero network dependency)
+3. Deterministic Rule Checks (Executed first against ALL active brand rules, zero network latency)
    ├── Prohibited Terms & Claims (Word-boundary regex)
    ├── Preferred Terms & Synonyms (Disallowed colloquialisms)
    ├── Required Phrases & Disclaimers (Presence checks)
    └── Configured Fact Conflicts (Explicit conflict patterns)
    │
    ▼
-4. Optional AI-Assisted Analysis (Executed only if LLM_API_KEY is configured and run_ai=True)
-   ├── Serializes active brand knowledge into system prompt
-   ├── Sends draft copy to Google Gemini REST API
-   ├── Validates returned JSON and strips unverified knowledge item IDs
+4. Contextual Knowledge Retrieval (RAG)
+   ├── Evaluates draft content using PostgreSQL pgvector cosine similarity or lexical fallback
+   └── Selects top-N most relevant active knowledge items to bound LLM context
+   │
+   ▼
+5. Optional AI-Assisted Analysis (Executed only if LLM_API_KEY is configured and run_ai=True)
+   ├── Passes bounded knowledge subset to Google Gemini REST API
+   ├── Validates returned JSON and strictly strips unverified knowledge item IDs
    └── Merges advisory AI findings with deterministic findings
    │
    ▼
-5. Findings & Evidence Assembly
+6. Findings & Evidence Assembly
    ├── Computes Safety Score (100 minus weighted severity penalties)
    ├── Formats offending excerpts and cites approved source labels
    └── Attaches suggested replacement rewrites
    │
    ▼
-6. Human Review & Remediation
+7. Human Review & Remediation
    ├── Reviewer evaluates findings in the split-view workbench
    ├── Reviewer can apply suggestions directly into editor text
    └── Reviewer selects decision: Approve, Needs Changes, or Reject
    │
    ▼
-7. Persistence & History Tracking
-   └── Stores Review snapshot, Findings, Decisions, and Audit Events in database
+8. Persistence & History Tracking
+   └── Stores Review snapshot (with retrieval_mode), Findings, Decisions, and Audit Events
 ```
 
 ### Coverage Notice & AI Disclaimer
@@ -122,8 +128,11 @@ The review pipeline processes content through a strict sequence:
 - **ASGI Server**: Uvicorn `[standard] >=0.28.0`
 - **Data Validation & Settings**: Pydantic v2 `>=2.6.0`, Pydantic Settings `>=2.2.0`
 - **Database ORM**: SQLAlchemy 2.x `>=2.0.28`
+- **Vector Extensions**: `pgvector >=0.2.5`
+- **Image & OCR Processing**: Pillow `>=10.2.0`, `pytesseract >=0.3.10`
 - **PostgreSQL Driver**: `psycopg[binary] >=3.1.18`
 - **HTTP Client**: `httpx >=0.27.0`
+- **Multipart Uploads**: `python-multipart >=0.0.9`
 - **Testing**: `pytest >=8.0.0`
 
 ### Frontend
@@ -140,31 +149,46 @@ The review pipeline processes content through a strict sequence:
 ```text
 Inkloom_Guardian/
 ├── README.md                           # Project documentation
+├── UPDATES.md                          # Round 3 architectural & implementation report
 ├── .gitignore                          # Git ignore definitions
 ├── docker-compose.yml                  # Multi-container orchestration
 ├── railway.json                        # Railway deployment configuration
 ├── render.yaml                         # Render blueprint specification
 ├── koyeb.yaml                          # Koyeb deployment manifest
 ├── backend/
-│   ├── Dockerfile                      # Production Python container
+│   ├── Dockerfile                      # Production Python container (with tesseract-ocr)
 │   ├── Procfile                        # Process manager definition
 │   ├── requirements.txt                # Pinned Python dependencies
 │   ├── .env.example                    # Backend environment template
 │   ├── app/
 │   │   ├── main.py                     # FastAPI application entrypoint & lifespan
 │   │   ├── config.py                   # Pydantic Settings configuration
-│   │   ├── db.py                       # SQLAlchemy engine & session factory
-│   │   ├── api/v1/                     # API routers (brands, knowledge, reviews, decisions)
-│   │   ├── models/base.py              # Relational database models
+│   │   ├── db.py                       # SQLAlchemy engine & pgvector extension initialization
+│   │   ├── api/v1/                     # API routers (brands, knowledge, reviews, decisions, assets)
+│   │   │   ├── brands.py               # Brand management routes
+│   │   │   ├── knowledge.py            # Knowledge items & automatic embedding triggers
+│   │   │   ├── reviews.py              # Review submission & history routes
+│   │   │   ├── decisions.py            # Human governance sign-off routes
+│   │   │   └── assets.py               # Multi-modal asset inspection route
+│   │   ├── models/base.py              # Relational models & KnowledgeEmbedding (pgvector)
 │   │   ├── schemas/base.py             # Pydantic request & response schemas
 │   │   ├── services/
 │   │   │   ├── rules_engine.py         # Deterministic rule verification checks
 │   │   │   ├── llm_provider.py         # Gemini LLM adapter & ID validation
+│   │   │   ├── embedding_service.py    # text-embedding-004, pgvector retrieval & reindex CLI
+│   │   │   ├── asset_checker.py        # Image validation & OCR text screening
+│   │   │   ├── regression_runner.py    # Rule regression CLI & historical drift replay
 │   │   │   ├── review_service.py       # Review orchestration & scoring
 │   │   │   └── audit_service.py        # Audit event logger
 │   │   └── seed/                       # Demo fixture definitions & seeder
 │   └── tests/
-│       └── test_api.py                 # Automated pytest suite
+│       ├── fixtures/
+│       │   └── regression_fixtures.json# Synthetic test cases for rule regression suite
+│       ├── conftest.py                 # Pytest session fixtures & test brand cleanup
+│       ├── test_api.py                 # Core API & brand lifecycle test suite
+│       ├── test_asset_checker.py       # Image validation & OCR screening test suite
+│       ├── test_rag.py                 # Vector search, lexical fallback & isolation test suite
+│       └── test_regression.py          # Regression runner integration tests
 └── frontend/
     ├── Dockerfile                      # Multi-stage production container
     ├── package.json                    # Scripts and dependencies
@@ -172,7 +196,15 @@ Inkloom_Guardian/
     ├── tsconfig.json                   # TypeScript configuration
     ├── .env.example                    # Frontend environment template
     ├── app/                            # Next.js App Router (layout, page, styles)
-    ├── components/                     # UI components & views
+    ├── components/                     # UI components
+    │   ├── AppHeader.tsx               # Workspace header with reviewer credentials & status
+    │   ├── AppSidebar.tsx              # Brand switcher & navigation menu
+    │   └── views/                      # Feature views
+    │       ├── BrandReviewWorkbench.tsx# Split-view review editor & RAG badge
+    │       ├── BrandKnowledgeRepository.tsx # Rule management workspace
+    │       ├── AssetInspectionView.tsx # Multi-modal image upload & OCR screening
+    │       ├── ReviewHistoryView.tsx   # Draft version history and decisions table
+    │       └── BrandSettingsView.tsx   # Brand visual token & metadata settings
     └── lib/                            # API client (`api.ts`) and types (`types.ts`)
 ```
 
@@ -263,6 +295,9 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 | `LLM_TIMEOUT_SECONDS`| No | `20` | Request timeout in seconds (minimum 30s enforced in client). |
 | `MAX_CONTENT_CHARS` | No | `12000` | Maximum allowable character length for submitted drafts. |
 | `ENABLE_DEMO_SEED` | No | `true` | Automatically seeds demo brand and knowledge on startup. |
+| `EMBEDDING_MODEL` | No | `text-embedding-004` | Embedding model for vector semantic retrieval (768 dimensions). |
+| `MAX_IMAGE_UPLOAD_BYTES` | No | `10485760` | Maximum asset upload file size in bytes (defaults to 10MB). |
+| `TESSERACT_CMD` | No | `""` | Optional custom binary path for Tesseract OCR executable. |
 
 > **Important Model Note**: The default model configured in code is `gemini-1.5-flash`. While `gemini-2.0-flash` is also supported, unverified identifiers such as `gemini-3.6-flash` will cause the Gemini REST API to return HTTP 404 (model not found), triggering a graceful fallback to rules-only mode.
 
@@ -329,6 +364,9 @@ All endpoints are registered under `/` and `/api/v1`:
 ### Decisions (`/api/v1/reviews/{review_id}/decisions`)
 - `POST /api/v1/reviews/{review_id}/decisions`: Record a human decision (`approved`, `needs_changes`, `rejected`).
 
+### Multi-Modal Assets (`/api/v1/brands/{brand_id}/assets`)
+- `POST /api/v1/brands/{brand_id}/assets/inspect-image`: Upload image file (`multipart/form-data`, PNG/JPEG/WebP up to 10MB) for OCR text extraction and deterministic brand policy screening. Returns extracted text, OCR confidence score, policy findings, and advisory limitations.
+
 ---
 
 ## 15. Example Content-Review Workflow
@@ -382,27 +420,38 @@ Inkloom Guardian uses a hybrid verification architecture:
 
 ## 19. Testing and Verification
 
-### Automated Test Suite
-The automated test suite in `backend/tests/test_api.py` was executed and verified:
+### 1. Automated Test Suite (13 Verified Tests)
+The comprehensive test suite in `backend/tests/` verifies all core workflows:
 - **Command**: `python -m pytest tests -v`
-- **Result**: `2 passed in ~39s` (against live Neon PostgreSQL).
-- **Coverage in Automated Suite**:
-  - Health check endpoint verification (`test_health`).
-  - Full brand lifecycle: Brand creation, knowledge item insertion (prohibited and preferred terms), draft review execution, finding generation, human decision recording, and brand-isolation verification between Brand X and Brand Y (`test_brand_lifecycle_and_review_flow`).
+- **Result**: `13 passed in ~16m` (tested against PostgreSQL and SQLite).
+- **Test Modules**:
+  - `tests/test_api.py`: API health check, complete brand lifecycle, deterministic rule evaluation, human governance decisions, and cross-brand rule isolation (`test_health`, `test_brand_lifecycle_and_review_flow`).
+  - `tests/test_asset_checker.py`: Format validation, corrupt image rejection, 4096px dimension bomb protection, graceful OCR degradation, and brand-isolated image inspection (`test_asset_inspection_*`).
+  - `tests/test_rag.py`: Verifies deterministic rule checks evaluate 100% of active rules without being reduced by RAG, lexical similarity fallback, inactive rule suppression, vector cosine ranking, and idempotent reindexing (`test_deterministic_checks_unaffected_by_rag_*`, `test_lexical_fallback_*`, `test_brand_isolation_*`, `test_vector_retrieval_*`, `test_reindex_*`).
+  - `tests/test_regression.py`: Automated execution of version-controlled synthetic rule fixtures and historical review replay drift detection (`test_automated_rule_regression_suite`, `test_regression_replay_mode`).
 
-### Frontend Production Build
+### 2. Standalone Rule Regression Suite CLI
+- **Command**: `python -m app.services.regression_runner`
+- **Result**: 9/9 synthetic test cases passed (zero network/LLM dependency).
+- **Historical Drift Replay**: `python -m app.services.regression_runner --replay --limit 20` (re-evaluates database reviews against current active rules without mutating historical records).
+
+### 3. Knowledge Embedding Reindexer CLI
+- **Command**: `python -m app.services.embedding_service reindex [--brand-id <uuid>]`
+- **Result**: Idempotently generates or updates 768-dimensional embeddings for all active brand knowledge items.
+
+### 4. Frontend Production Build
 The Next.js frontend production bundle was compiled and verified:
 - **Command**: `npm run build`
-- **Result**: Exited code 0; TypeScript compilation and static page generation completed with 0 errors.
+- **Result**: Exited code 0; Turbopack production compilation and static page generation completed with 0 errors.
 
-### Manual Verification Results Reported by Developer
-The following individual scenarios were manually tested by the project developer:
+### Manual Verification Scenarios Tested
 1. Detection of risky 24-hour product-results claims.
 2. Draft containing approved 10% active concentration passing the fact check.
 3. Verification of required disclaimer presence.
 4. Application of suggested rewrites removing prohibited guarantee wording.
 5. Review persistence and version navigation in review history.
 6. Verification that knowledge configured in Brand A does not trigger findings in Brand B.
+7. Image banner upload, OCR extraction, and policy screening in Asset Inspection.
 
 ---
 
@@ -433,19 +482,19 @@ The following individual scenarios were manually tested by the project developer
 
 ## 21. Known Limitations
 
-1. **Single-User Reviewer Identity**: Human decisions record an arbitrary string label (e.g., "Demo reviewer", "Admin Guardian"); individual user authentication and session management are not yet implemented.
-2. **Plain-Text Content Limit**: Content review accepts plain text and Markdown; direct upload and parsing of PDF, Word (.docx), or HTML files is not currently supported.
+1. **Advisory OCR Screening**: Multi-modal asset checking evaluates extracted plain text only. It does not verify typography, layout, font sizes, colors, or logo artwork. Findings are advisory and human verification remains necessary.
+2. **Plain-Text Content Limit**: Draft review accepts plain text and Markdown; direct upload and document parsing of PDF, Word (.docx), or HTML files is not currently supported.
 3. **Exact & Regex Fact Matching**: Deterministic fact checking requires explicit `conflict_patterns` regexes configured in rule metadata. Dynamic numerical range comparison is handled by the LLM.
-4. **Prompt Context Limits**: The entire active knowledge set for a brand is serialized into the LLM prompt. Brands with hundreds of extensive knowledge records may encounter latency or context window bounds.
+4. **Context Retrieval Bounding**: RAG retrieves the top-N semantically relevant knowledge records for the LLM prompt. Deterministic checks always evaluate 100% of active brand rules, but AI evaluation focuses on the bounded subset.
 
 ---
 
 ## 22. Future Roadmap
 
-- **Vector Search & Embeddings (RAG)**: Indexing brand guidelines in pgvector for semantic retrieval when brand rulebooks exceed prompt context limits.
-- **Multi-Modal Asset Checking**: OCR and layout checking for trademarks, logos, and disclaimer font size compliance in marketing images.
-- **Automated Rule Regression Suite**: Batch-testing historical drafts against updated or newly added knowledge items to verify review consistency.
-- **Enterprise Authentication (SSO / RBAC)**: Integrating OAuth2/OIDC and role-based permissions (Reviewer, Brand Lead, Legal Admin).
+- **Document File Ingestion**: Direct upload, parsing, and section-by-section governance of PDF, DOCX, and rich-text files.
+- **Enterprise Authentication (SSO / RBAC)**: Integrating SAML, OAuth2/OIDC, and role-based permissions (Reviewer, Brand Lead, Legal Admin).
+- **Real-Time CMS & Editor Plugins**: Browser extensions, Figma widgets, and CMS integrations (Contentful, WordPress) for in-flight governance.
+- **Fine-Grained Audit Telemetry Streaming**: Webhook streaming of review snapshots and human sign-offs to enterprise SIEM platforms.
 
 ---
 
