@@ -21,3 +21,4 @@ def cleanup_test_brands_after_session():
             db.commit()
     except Exception:
         pass
+
